@@ -2,28 +2,1007 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFC300">
 <title>合拍 · 合租生活管家</title>
 <style>
-  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f6f7f9;color:#1c1f24;font-family:-apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;padding:24px;box-sizing:border-box}
-  .card{max-width:520px;width:100%;background:#fff;border-radius:16px;padding:40px 32px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
-  h1{margin:0 0 8px;font-size:32px}
-  .sub{color:#666;margin:0 0 28px;font-size:16px}
-  ul{padding-left:20px;margin:0 0 28px;line-height:1.9;color:#333}
-  .note{font-size:14px;color:#888;border-top:1px solid #eee;padding-top:16px;line-height:1.7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:#ECEDEF;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;color:#222;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;font-size:inherit;border:0;background:none;padding:0;margin:0;color:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px}
+:root{
+  --y:#FFC300; --y2:#FFD84D; --y-soft:#FFF6D6; --ink:#222; --sub:#666; --muted:#999; --line:#EEE; --bg:#F5F5F5; --card:#FFF;
+  --orange:#FF6A00; --green:#1FA36A; --red:#E5423C; --blue:#3A7BD5; --tag:#F3F4F6;
+}
+/* ---- stage: phone + console ---- */
+.stage{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:36px;padding:28px 16px}
+.device{position:relative;width:402px;height:874px;background:#000;border-radius:56px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.35),0 0 0 2px #2a2a2a inset;flex:0 0 auto}
+.device .screen{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:126px;height:37px;background:#000;border-radius:24px;z-index:600}
+.statusbar{position:absolute;top:0;left:0;right:0;height:59px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 10px;font-size:15px;font-weight:600;z-index:600;pointer-events:none}
+.statusbar .time{font-variant-numeric:tabular-nums}
+.statusbar .right{display:flex;gap:6px;align-items:center}
+.app{position:absolute;inset:0;display:flex;flex-direction:column}
+.app .content{flex:1;overflow-y:auto;overflow-x:hidden;padding:64px 14px 96px;scrollbar-width:none}
+.app .content::-webkit-scrollbar{display:none}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:84px;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px 22px;z-index:30}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;color:var(--muted);font-weight:500}
+.tabbar button.on{color:var(--ink)}
+.tabbar svg{width:24px;height:24px}
+.tabbar button.on svg{filter:none}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:140px;height:5px;border-radius:3px;background:#111;z-index:60;opacity:.85}
+
+@media (max-width:899px){
+  body{background:var(--bg)}
+  .stage{padding:0;gap:0;display:block;min-height:auto}
+  .device{width:100%;height:100dvh;border-radius:0;padding:0;box-shadow:none}
+  .device .screen{border-radius:0}
+  .island,.homebar{display:none}
+  .statusbar{display:none}
+  .app .content{padding-top:12px}
+  .console{display:none}
+  .console.open{display:flex;position:fixed;inset:auto 0 0 0;width:100%;max-height:70vh;border-radius:16px 16px 0 0;z-index:500;overflow:auto}
+  .console-fab{display:flex !important}
+}
+.console-fab{display:none;position:fixed;right:14px;bottom:100px;width:44px;height:44px;border-radius:22px;background:#222;color:#fff;align-items:center;justify-content:center;z-index:400;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:18px}
+
+/* ---- console ---- */
+.console{width:300px;background:#1D1F23;color:#DDD;border-radius:16px;padding:16px 16px 18px;display:flex;flex-direction:column;gap:10px;font-size:13px;flex:0 0 auto;max-height:874px;overflow:auto;scrollbar-width:thin}
+.console h3{margin:0 0 2px;font-size:14px;color:#fff;letter-spacing:.04em}
+.console .hint{color:#8a8f98;font-size:12px;margin:0 0 6px}
+.console .grp{border-top:1px solid #2c2f35;padding-top:10px}
+.console .grp b{display:block;font-size:11px;color:#9aa0a8;letter-spacing:.12em;margin-bottom:8px;font-weight:600}
+.console .row{display:flex;flex-wrap:wrap;gap:6px}
+.console button{background:#2A2D33;color:#EEE;border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.2;text-align:left}
+.console button:hover{background:#363a42}
+.console button.y{background:var(--y);color:#111;font-weight:600}
+.console button.who{padding:6px 10px}
+.console button.who.on{background:var(--y);color:#111}
+.console .kv{display:flex;justify-content:space-between;color:#9aa0a8}
+.console .kv span:last-child{color:#fff;font-variant-numeric:tabular-nums}
+
+/* ---- app ui ---- */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin:2px 0 12px}
+.hdr h1{font-size:22px;margin:0;font-weight:700;letter-spacing:.01em}
+.hdr .sub{font-size:12px;color:var(--sub);margin-top:2px}
+.avatar{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#111;flex:0 0 auto}
+.avatar.sm{width:26px;height:26px;font-size:11px}
+.avatar.lg{width:52px;height:52px;font-size:20px}
+.me-btn{display:flex;align-items:center;gap:8px;background:#fff;border-radius:20px;padding:4px 10px 4px 4px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.me-btn .nm{font-size:13px;font-weight:600}
+.me-btn .chev{color:var(--muted);font-size:11px}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card.y{background:linear-gradient(160deg,#FFD84D,#FFC300);color:#111}
+.card h2{font-size:15px;margin:0 0 10px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+.card h2 .more{font-size:12px;color:var(--sub);font-weight:400}
+.card.y h2 .more{color:rgba(0,0,0,.6)}
+.big{font-size:34px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.05}
+.big small{font-size:14px;font-weight:600;margin-right:2px}
+.mono,.num{font-variant-numeric:tabular-nums}
+.money{color:var(--orange);font-weight:700;font-variant-numeric:tabular-nums}
+.money.in{color:var(--green)}
+.row{display:flex;align-items:center;gap:10px}
+.row.between{justify-content:space-between}
+.col{display:flex;flex-direction:column;gap:2px;min-width:0}
+.t1{font-size:15px;font-weight:600}
+.t2{font-size:12.5px;color:var(--sub)}
+.t3{font-size:12px;color:var(--muted)}
+.list>*{padding:11px 0;border-bottom:1px solid var(--line)}
+.list>*:last-child{border-bottom:0;padding-bottom:0}
+.list>*:first-child{padding-top:0}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--tag);color:var(--sub);white-space:nowrap}
+.pill.y{background:var(--y-soft);color:#8a6100}
+.pill.g{background:#E4F5EC;color:var(--green)}
+.pill.r{background:#FDE8E7;color:var(--red)}
+.pill.o{background:#FFEEDD;color:var(--orange)}
+.pill.b{background:#E8F0FC;color:var(--blue)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--y);color:#111;font-weight:700;border-radius:10px;padding:11px 16px;font-size:15px;width:100%}
+.btn.sm{padding:7px 12px;font-size:13px;width:auto;border-radius:8px}
+.btn{white-space:nowrap}
+.btn.ghost{background:#fff;border:1px solid #DDD;color:var(--ink);font-weight:600}
+.btn.dark{background:#222;color:#fff}
+.btn.line{background:var(--y-soft);color:#7a5600}
+.btn:disabled{opacity:.45}
+.btn-row{display:flex;gap:10px;margin-top:12px}
+.btn-row .btn{flex:1}
+.toggle{width:50px;height:30px;border-radius:15px;background:#DDD;position:relative;transition:.2s;flex:0 0 auto}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}
+.toggle.on{background:var(--green)}
+.toggle.on::after{left:23px}
+.sec-title{font-size:13px;color:var(--sub);margin:16px 2px 8px;font-weight:600;letter-spacing:.04em}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:#fff;border-radius:12px;padding:12px}
+.tile .v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.tile .l{font-size:12px;color:var(--sub)}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:18px 0}
+.detail{background:#FAFAFA;border-radius:10px;padding:10px 12px;margin-top:10px;font-size:13px}
+.detail .ln{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1px 10px;padding:4px 0;border-bottom:1px dashed #E8E8E8}
+.detail .ln span:first-child{flex:1 1 auto}
+.detail .ln span:last-child{margin-left:auto;text-align:right}
+.detail .ln:last-child{border-bottom:0}
+.detail .ln.total{font-weight:700}
+.bar{height:8px;border-radius:4px;background:#F0F0F0;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--y);border-radius:4px}
+.thresh{display:flex;gap:6px;align-items:flex-end;height:80px;padding:6px 4px 0}
+.thresh .c{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--sub)}
+.thresh .c i{display:block;width:100%;max-width:38px;background:var(--y);border-radius:6px 6px 2px 2px}
+.thresh .c i.lo{background:#FFE9A3}
+.link{color:var(--blue);font-size:13px;font-weight:600}
+.notice-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;margin-left:4px;vertical-align:middle}
+.tabs{display:flex;background:#fff;border-radius:10px;padding:3px;margin-bottom:12px}
+.tabs button{flex:1;padding:8px;border-radius:8px;font-size:13px;font-weight:600;color:var(--sub)}
+.tabs button.on{background:var(--y);color:#111}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid #DDD;border-radius:8px;padding:6px 10px;font-size:13px;background:#fff}
+.chip.on{border-color:var(--y);background:var(--y-soft);font-weight:600}
+.opt{border:1.5px solid #E5E5E5;border-radius:12px;padding:12px;margin-bottom:10px;background:#fff;display:flex;gap:10px;align-items:flex-start}
+.opt.on{border-color:#111;background:#FFFBEA}
+.opt .k{width:24px;height:24px;border-radius:50%;background:var(--tag);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto;margin-top:1px}
+.opt.on .k{background:#111;color:var(--y)}
+.opt .why{font-size:12px;color:#8a6100;margin-top:4px}
+.opt .tally{font-size:11.5px;color:var(--muted);margin-top:4px}
+.q-num{font-size:12px;color:var(--muted);letter-spacing:.1em;font-weight:600}
+.q-title{font-size:18px;font-weight:700;margin:4px 0 14px;line-height:1.35}
+.progress{height:4px;background:#EEE;border-radius:2px;margin:6px 0 16px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--y)}
+.input{width:100%;border:1px solid #DDD;border-radius:10px;padding:11px 12px;background:#fff;outline:none}
+.input:focus{border-color:var(--y)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12.5px;color:var(--sub);margin-bottom:6px}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{border:1px solid #DDD;border-radius:8px;padding:7px 12px;font-size:13px;background:#fff}
+.seg button.on{border-color:#111;background:#111;color:var(--y);font-weight:600}
+.ranking .rk{width:22px;text-align:center;font-weight:800;color:var(--muted)}
+.ranking .rk.top{color:var(--orange)}
+.member-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.member-row:last-child{border-bottom:0}
+.changelog{font-size:11.5px;color:var(--muted);text-align:center;margin:18px 0 6px}
+.changelog b{color:var(--sub);font-weight:600}
+
+/* ---- sheet / modal ---- */
+.sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;animation:fade .18s}
+.sheet{background:#F7F7F7;width:100%;max-height:92%;border-radius:22px 22px 0 0;padding:10px 16px 34px;overflow-y:auto;animation:up .22s cubic-bezier(.2,.8,.2,1);scrollbar-width:none}
+.sheet::-webkit-scrollbar{display:none}
+.sheet .grab{width:38px;height:5px;border-radius:3px;background:#D8D8D8;margin:2px auto 12px}
+.sheet h2{font-size:19px;margin:0 0 4px;font-weight:700}
+.sheet .sub{color:var(--sub);font-size:13px;margin-bottom:14px}
+.sheet.full{max-height:100%;height:100%;border-radius:0;padding-top:64px}
+@media (max-width:899px){.sheet.full{padding-top:16px}}
+@keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.close-x{position:absolute;right:14px;top:10px;width:30px;height:30px;border-radius:50%;background:#EEE;display:flex;align-items:center;justify-content:center;color:#555;font-size:16px}
+
+/* ---- push notification ---- */
+.push{position:absolute;top:62px;left:12px;right:12px;background:rgba(250,250,250,.96);backdrop-filter:blur(20px);border-radius:20px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.18);z-index:300;animation:drop .35s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:899px){.push{top:10px}}
+@keyframes drop{from{transform:translateY(-80px);opacity:0}to{transform:none;opacity:1}}
+.push .top{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)}
+.push .ic{width:20px;height:20px;border-radius:5px;background:var(--y);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#111}
+.push .ttl{font-weight:700;font-size:14px;margin-top:4px}
+.push .body{font-size:13.5px;color:#333;margin-top:2px}
+.push .acts{display:flex;gap:8px;margin-top:10px}
+.push .acts button{flex:1;background:#fff;border:1px solid #DDD;border-radius:9px;padding:8px;font-size:13px;font-weight:600}
+.push .acts button.pri{background:var(--y);border-color:var(--y)}
+.toast{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);background:rgba(20,20,20,.9);color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;z-index:350;white-space:nowrap;animation:fade .2s}
+.note{background:#FFF9E6;border:1px solid #FFE9A3;border-radius:10px;padding:10px 12px;font-size:12.5px;color:#6b4d00;margin-bottom:12px}
+.note.b{background:#EEF4FF;border-color:#CFE0FF;color:#2a4d8a}
+.strike{text-decoration:line-through;color:var(--muted)}
+.settle-tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.settle-tbl td{padding:8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.settle-tbl td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.settle-tbl tr.total td{border-bottom:0;font-weight:800;font-size:16px;padding-top:12px}
+.dim{opacity:.55}
+.week-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.area{background:#fff;border-radius:12px;padding:10px 8px;text-align:center;border:1.5px solid transparent}
+.area.mine{border-color:var(--y);background:var(--y-soft)}
+.area .an{font-size:13px;font-weight:700}
+.area .who{font-size:12px;color:var(--sub);margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.area .swap{font-size:11px;color:var(--orange)}
+.photo{height:64px;border-radius:10px;margin-bottom:8px;position:relative;overflow:hidden;background:#F0EAD6}
+.photo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(120,90,40,var(--m)) 0 6px,transparent 6px 14px)}
+.hist{font-size:12.5px;color:var(--sub);padding:6px 0;border-bottom:1px dashed var(--line)}
+.hist:last-child{border-bottom:0}
+.hist b{color:var(--ink);font-weight:600}
+
 </style>
 </head>
 <body>
-<div class="card">
-  <h1>合拍</h1>
-  <p class="sub">合租生活管家 · 让账、活、物、规矩都由系统说了算</p>
-  <ul>
-    <li>费用 AA 分摊（支持出差天数 / 访客 / 用电权重）</li>
-    <li>清洁值日排班</li>
-    <li>公共物品登记与提醒</li>
-    <li>室友公约管理</li>
-  </ul>
-  <p class="note">作品持续迭代中，本链接固定不变，最新版本随时更新。<br>最近更新：2026-09-12</p>
+<div class="stage">
+  <div class="device">
+    <div class="screen">
+      <div class="island"></div>
+      <div class="statusbar"><span class="time" id="clock">9:41</span><span class="right"><span>●●●</span><span>WiFi</span><span>▮</span></span></div>
+      <div class="app">
+        <div class="content" id="content"></div>
+        <div class="tabbar" id="tabbar"></div>
+      </div>
+      <div id="overlay"></div>
+      <div class="homebar"></div>
+    </div>
+  </div>
+  <aside class="console" id="console"></aside>
+  <button class="console-fab" id="consoleFab" title="演示控制台">⚙</button>
 </div>
+<script>
+/* ============ 合拍 · data & engine ============ */
+'use strict';
+const VERSION = 'v0.1';
+const STORE_KEY = 'hepai_state_v1';
+const CARRY_LIMIT = 20;      // 小额滚存阈值（元）
+const MONTH = '2026-09';
+const MONTH_DAYS = 30;
+const TODAY0 = '2026-09-14';
+
+const QUESTIONS = [
+  { id:'q1', title:'有人一周以上不在家，水电怎么算？',
+    opts:{ A:'照常均摊', B:'按在家天数算，不在家的天数不摊水电（房租照付）', C:'超过 10 天才开始按天算' },
+    rec:'B', why:'避免出差的人替在家的人付空调钱。' },
+  { id:'q2', title:'有人带朋友或对象连住几天，怎么算？',
+    opts:{ A:'住几天都不算', B:'连住 3 晚以上，每晚按半个人算水电', C:'每晚都按半个人算' },
+    rec:'B', why:'偶尔来住不计较，长住要算，避免"实际住了四个人却三个人分"。' },
+  { id:'q3', title:'房间大小、有没有空调差很多，房租水电要不要按房间算？',
+    opts:{ A:'都不加权，全部按人头', B:'房租按房间定，水电按人头', C:'水电也按房间权重' },
+    rec:'B', why:'房租差异在签约时已经体现，水电按人算最少争议。' },
+  { id:'q4', title:'卫生纸、洗洁精、垃圾袋这类公共消耗品，谁买、怎么摊？',
+    opts:{ A:'谁用谁买，不记账', B:'任何人买了记一笔，月底均摊', C:'轮流买，不记账' },
+    rec:'B', why:'让"总是同一个人买"被看见，几块钱也是付出。' },
+  { id:'q5', title:'有人中途退租，怎么结算？',
+    opts:{ A:'走的那天口头算清', B:'系统按在住天数出结算单：未结账单、滚存差额、押金份额、公共物品折价', C:'只退押金，其他不算' },
+    rec:'B', why:'押金是合租里唯一真实的钱，退租是唯一必须算清的时刻，事先说好走的时候不用谈。' },
+  { id:'q6', title:'公共区域的卫生怎么保持？',
+    opts:{ A:'四个区域每周轮值', B:'请保洁阿姨，费用均摊，值日只剩倒垃圾', C:'各管各的，不设公共值日' },
+    rec:'A', why:'轮值最省钱；如果大家对"干净"的标准差得远，阿姨是体面的出口。' },
+];
+const EXTRA_RULES = [
+  { id:'e1', k:'安静时间', v:'23:00 之后公共区域不外放声音' },
+  { id:'e2', k:'访客最长连住', v:'7 晚，超过需全员同意' },
+  { id:'e3', k:'宠物', v:'不养' },
+];
+
+function seed(){
+  return {
+    version: VERSION,
+    today: TODAY0,
+    me: 'zhao',
+    tab: 'home',
+    house: { name:'望京 · 融科橄榄城 3 居', since:'2026-06-01' },
+    members: [
+      { id:'zhao', name:'老赵', short:'赵', color:'#FFD84D', room:'主卧', rent:2600, deposit:2600, weight:1.4, role:'主租 · 代付人', joined:'2026-06-01', payer:true },
+      { id:'dali', name:'大力', short:'力', color:'#9ED8FF', room:'次卧 A', rent:2000, deposit:2000, weight:1.0, role:'常出差', joined:'2026-06-01' },
+      { id:'ajie', name:'阿杰', short:'杰', color:'#C9B6FF', room:'次卧 B（最小）', rent:1600, deposit:1600, weight:0.8, role:'', joined:'2026-06-01' },
+      { id:'may',  name:'阿 May', short:'M', color:'#FFB3A7', room:'次卧 C', rent:2200, deposit:2200, weight:1.1, role:'', joined:'2026-07-05' },
+    ],
+    invitee: { id:'xiaoya', name:'小雅', short:'雅', color:'#B7E3C8', room:'次卧 A', rent:2000, deposit:2000, weight:1.0, status:'none' }, // none | invited | onboarding | joined
+    rules: {
+      current: { q1:'B', q2:'B', q3:'B', q4:'B', q5:'B', q6:'A' },
+      answers: {
+        q1:{zhao:'B',dali:'B',ajie:'B',may:'B'},
+        q2:{zhao:'B',dali:'B',ajie:'B',may:'B'},
+        q3:{zhao:'B',dali:'B',ajie:'C',may:'B'},
+        q4:{zhao:'B',dali:'A',ajie:'B',may:'B'},
+        q5:{zhao:'B',dali:'B',ajie:'B',may:'B'},
+        q6:{zhao:'A',dali:'A',ajie:'A',may:'B'},
+      },
+      version: 2,
+      history: [
+        { v:1, date:'2026-06-01', note:'建家，老赵 / 大力 / 阿杰 三人作答' },
+        { v:2, date:'2026-07-05', note:'阿 May 入住触发回顾，第 4 题 A → B（消耗品记账均摊）' },
+      ],
+      reviewPending: false,
+      reviewAnswers: {},
+      lastReview: '2026-07-05',
+    },
+    facts: {
+      away: [ // confirmed
+        { id:'a1', member:'dali', from:'2026-09-03', to:'2026-09-12', by:'dali', status:'confirmed' },
+      ],
+      guests: { ajie: ['2026-09-01','2026-09-02','2026-09-03','2026-09-05','2026-09-06','2026-09-07','2026-09-08','2026-09-09','2026-09-10','2026-09-12','2026-09-13','2026-09-14'] },
+      pending: [ // 待本人确认
+        { id:'p1', type:'away', member:'dali', by:'zhao', from:'2026-09-20', to:'2026-09-22', created:'2026-09-13', deadlineH:31 },
+      ],
+      awayNow: {}, // member -> true 当前"不在家"开关
+    },
+    bills: [
+      { id:'b1', type:'房租', amount:8400, payer:'zhao', date:'2026-09-01', due:'2026-09-05', note:'9 月房租，老赵已转房东', paid:{zhao:true,dali:true,ajie:true,may:true}, confirmed:{dali:true,ajie:true,may:true} },
+      { id:'b2', type:'网费', amount:200, payer:'zhao', date:'2026-09-01', due:'2026-09-08', note:'联通 500M 包月', paid:{zhao:true,dali:true,ajie:true,may:false}, confirmed:{dali:true,ajie:true} },
+      { id:'b3', type:'卫生纸', kind:'物资', amount:22, payer:'may', date:'2026-09-02', due:'2026-09-30', note:'维达 12 卷', paid:{may:true}, confirmed:{} },
+      { id:'b4', type:'电费', amount:328, payer:'zhao', date:'2026-09-12', due:'2026-09-19', note:'9 月电费（国网 App 截图）', paid:{zhao:true,may:true}, confirmed:{may:true} },
+      { id:'b5', type:'水费', amount:96, payer:'zhao', date:'2026-09-12', due:'2026-09-19', note:'9 月水费', paid:{zhao:true}, confirmed:{} },
+    ],
+    chores: {
+      areas: ['厨房','卫生间','客厅','阳台'],
+      weekStart: '2026-09-14',
+      rota: { '厨房':'dali', '卫生间':'may', '客厅':'ajie', '阳台':'zhao' },
+      swaps: [ { id:'s1', week:'2026-09-07', area:'厨房', from:'dali', to:'may', note:'大力不在家，阿 May 接厨房，大力下周补一次' } ],
+      swapRequest: null, // {area, from, week}
+      extras: [
+        { id:'x1', by:'may', area:'厨房', date:'2026-09-09', thanks:['zhao'] },
+        { id:'x2', by:'may', area:'卫生间', date:'2026-09-05', thanks:[] },
+        { id:'x3', by:'ajie', area:'客厅', date:'2026-08-30', thanks:['may'] },
+        { id:'x4', by:'may', area:'厨房', date:'2026-08-24', thanks:['zhao','ajie'] },
+      ],
+      thresholds: { zhao:3, dali:5, ajie:3, may:1 }, // 1 = 最敏感（第 1 张图就动手）
+      standards: { '厨房':'台面无油 · 水槽无碗 · 垃圾已倒', '卫生间':'镜面无水渍 · 地面无头发 · 垃圾已倒', '客厅':'桌面收拾 · 地面吸尘', '阳台':'晾衣区整理 · 地面清扫' },
+    },
+    ayi: { status:'suggested', price:128, freq:14, votes:{}, trialBy:null, nextDate:null }, // suggested | trial | voting | active | declined
+    supplies: [
+      { id:'k1', name:'卫生纸', status:'low', buys:[{by:'may',amount:22,date:'2026-09-02'},{by:'may',amount:19.9,date:'2026-08-05'},{by:'may',amount:22,date:'2026-07-08'}] },
+      { id:'k2', name:'洗洁精', status:'ok', buys:[{by:'may',amount:12.9,date:'2026-08-20'}] },
+      { id:'k3', name:'垃圾袋', status:'empty', buys:[{by:'may',amount:9.9,date:'2026-08-28'},{by:'zhao',amount:9.9,date:'2026-07-20'}] },
+      { id:'k4', name:'洗手液', status:'ok', buys:[{by:'zhao',amount:15,date:'2026-08-15'}] },
+      { id:'k5', name:'抽纸', status:'ok', buys:[{by:'ajie',amount:24.9,date:'2026-08-10'}] },
+    ],
+    supplyBuyer: 'ajie', // 本周采购人（轮流）
+    left: [], // 已退租成员 id
+    settlements: [],
+    log: [
+      { date:'2026-09-13', text:'老赵替大力标记 9/20–9/22 不在家，待大力确认' },
+      { date:'2026-09-12', text:'老赵录入 9 月电费 328 元、水费 96 元' },
+      { date:'2026-09-09', text:'阿 May 额外清洁了厨房' },
+      { date:'2026-09-07', text:'大力不在家，阿 May 接了厨房值日' },
+      { date:'2026-09-03', text:'大力标记 9/3–9/12 不在家' },
+      { date:'2026-09-02', text:'阿 May 买了卫生纸 22 元，已入账' },
+    ],
+    pushes: [],
+  };
+}
+
+/* ---------- storage ---------- */
+let S = null;
+function load(){
+  try{ const raw = localStorage.getItem(STORE_KEY); if(raw){ const o = JSON.parse(raw); if(o && o.version===VERSION){ S = o; return; } } }catch(e){}
+  S = seed();
+}
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
+function resetAll(){ try{ localStorage.removeItem(STORE_KEY); }catch(e){} S = seed(); }
+
+/* ---------- helpers ---------- */
+const fmt = n => (Math.round(n*100)/100).toFixed(n%1===0?0:2).replace(/\.00$/,'');
+const fmt1 = n => (Math.round(n*100)/100).toFixed(2).replace(/\.?0+$/,'');
+const yuan = n => '¥' + fmt1(Math.abs(n));
+function member(id){ return S.members.find(m=>m.id===id) || (S.invitee.id===id? S.invitee : null); }
+function activeMembers(){ return S.members.filter(m=>!S.left.includes(m.id)); }
+function nameOf(id){ const m = member(id); return m? m.name : id; }
+function me(){ return member(S.me); }
+function dayNum(d){ return parseInt(d.slice(8,10),10); }
+function dateCN(d){ return `${parseInt(d.slice(5,7))}月${parseInt(d.slice(8,10))}日`; }
+function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+function addDays(d,n){ const t=new Date(d); t.setDate(t.getDate()+n); return t.toISOString().slice(0,10); }
+function uid(){ return Math.random().toString(36).slice(2,8); }
+function logIt(text){ S.log.unshift({date:S.today, text}); if(S.log.length>40) S.log.length=40; }
+function avatarHTML(id, cls=''){ const m = member(id); if(!m) return ''; return `<span class="avatar ${cls}" style="background:${m.color}">${m.short}</span>`; }
+
+/* ---------- facts ---------- */
+function awayDays(mid){
+  let d = 0;
+  S.facts.away.filter(a=>a.member===mid && a.status==='confirmed').forEach(a=>{
+    const from = a.from < MONTH+'-01' ? MONTH+'-01' : a.from;
+    const to = a.to > MONTH+'-30' ? MONTH+'-30' : a.to;
+    if(to>=from) d += daysBetween(from,to)+1;
+  });
+  return Math.min(d, MONTH_DAYS);
+}
+function guestNights(mid){ return (S.facts.guests[mid]||[]).filter(d=>d.startsWith(MONTH)).length; }
+function guestHalf(mid){
+  const n = guestNights(mid); const r = S.rules.current.q2;
+  if(r==='A') return 0; if(r==='C') return n*0.5; return n>=3 ? n*0.5 : 0;
+}
+function personDays(mid){
+  const away = S.rules.current.q1==='A' ? 0 : S.rules.current.q1==='C' ? (awayDays(mid)>10? awayDays(mid):0) : awayDays(mid);
+  const w = S.rules.current.q3==='C' ? member(mid).weight : 1;
+  return { home: MONTH_DAYS-away, away, guest: guestHalf(mid), w, pd: (MONTH_DAYS-away)*w + guestHalf(mid) };
+}
+const UTIL = ['电费','水费','燃气费'];
+function billMemberIds(b){ return b.members || activeMembers().map(m=>m.id); }
+function billMembers(b){ return billMemberIds(b).map(id=>member(id)).filter(Boolean); }
+
+/* ---------- split engine ---------- */
+function splitBill(b){
+  const ms = billMemberIds(b);
+  const n = ms.length;
+  const shares = {}; const lines = []; let mode = 'equal';
+  if(b.type==='房租'){
+    ms.forEach(id=>{ shares[id]=member(id).rent; });
+    lines.push({k:'规则', v:'房租按房间定（第 3 题）'});
+    ms.forEach(id=> lines.push({k:`${nameOf(id)} · ${member(id).room}`, v: yuan(shares[id])}));
+    return { shares, equal:{...shares}, lines, mode:'rule', maxDiff:0, ruleName:'按房间' };
+  }
+  if(UTIL.includes(b.type)){
+    const pds = {}; let total = 0;
+    ms.forEach(id=>{ pds[id]=personDays(id); total += pds[id].pd; });
+    const per = b.amount/total;
+    ms.forEach(id=>{ shares[id] = pds[id].pd*per; });
+    lines.push({k:'规则', v:`按人天分摊（第 1、2${S.rules.current.q3==='C'?'、3':''} 题）`});
+    lines.push({k:'本月天数', v:`${MONTH_DAYS} 天 · 共 ${fmt1(total)} 人天 · 每人天 ${yuan(per)}`});
+    ms.forEach(id=>{
+      const p = pds[id]; let d = `在家 ${p.home} 天`;
+      if(p.away) d += `，不在家 ${p.away} 天`;
+      if(p.guest) d += `，访客 ${guestNights(id)} 晚 × 0.5`;
+      if(p.w!==1) d += `，房间权重 ${p.w}`;
+      lines.push({k:`${nameOf(id)}：${d}`, v:`${fmt1(p.pd)} 人天 → ${yuan(shares[id])}`});
+    });
+  } else {
+    ms.forEach(id=>{ shares[id] = b.amount/n; });
+    const rn = b.kind==='物资' ? '消耗品记账均摊（第 4 题）' : b.type==='保洁' ? '保洁费用均摊（第 6 题）' : '按人头均摊';
+    lines.push({k:'规则', v:rn});
+    lines.push({k:`${n} 人均摊`, v:`每人 ${yuan(b.amount/n)}`});
+  }
+  const equal = {}; ms.forEach(id=> equal[id]=b.amount/n);
+  let maxDiff = 0; ms.forEach(id=> maxDiff = Math.max(maxDiff, Math.abs(shares[id]-equal[id])));
+  mode = maxDiff >= CARRY_LIMIT ? 'rule' : 'equal';
+  return { shares, equal, lines, mode, maxDiff, ruleName: UTIL.includes(b.type)?'按人天':'均摊' };
+}
+/* 本次实际收款额：mode=rule 收规则份额；mode=equal 收均摊，差额滚存 */
+function collectShare(b, mid){ const sp = splitBill(b); return sp.mode==='rule' ? sp.shares[mid] : sp.equal[mid]; }
+function carryOf(mid){
+  let c = 0;
+  S.bills.forEach(b=>{ const sp = splitBill(b); if(sp.mode==='equal' && sp.shares[mid]!==undefined) c += sp.shares[mid]-sp.equal[mid]; });
+  return c; // 正数 = 按规则本应多付、退租时补；负数 = 退租时退还
+}
+function owedByMe(mid){ // 我未付
+  let t = 0; const items = [];
+  S.bills.forEach(b=>{ if(b.payer!==mid && !b.paid[mid] && splitBill(b).shares[mid]!==undefined){ const s = collectShare(b,mid); t += s; items.push({b, s}); } });
+  return { total:t, items };
+}
+function owedToMe(mid){ // 别人欠我
+  let t = 0; const items = [];
+  S.bills.filter(b=>b.payer===mid).forEach(b=>{ billMembers(b).forEach(m=>{ if(m.id!==mid && !b.paid[m.id]){ const s = collectShare(b,m.id); t += s; items.push({b, who:m.id, s}); } }); });
+  return { total:t, items };
+}
+/* 净额结算：谁给谁转 */
+function netTransfers(){
+  const bal = {};
+  S.bills.forEach(b=>{ billMembers(b).forEach(m=>{ if(m.id!==b.payer && !b.paid[m.id]){ const s = collectShare(b,m.id); bal[m.id]=(bal[m.id]||0)-s; bal[b.payer]=(bal[b.payer]||0)+s; } }); });
+  const debt = Object.entries(bal).filter(([,v])=>v<-0.005).map(([id,v])=>({id,v:-v})).sort((a,b)=>b.v-a.v);
+  const cred = Object.entries(bal).filter(([,v])=>v>0.005).map(([id,v])=>({id,v})).sort((a,b)=>b.v-a.v);
+  const tr = []; let i=0,j=0;
+  while(i<debt.length && j<cred.length){ const x = Math.min(debt[i].v, cred[j].v); tr.push({from:debt[i].id,to:cred[j].id,amt:x}); debt[i].v-=x; cred[j].v-=x; if(debt[i].v<0.005) i++; if(cred[j].v<0.005) j++; }
+  return tr;
+}
+/* 退租结算 */
+function settlement(mid){
+  const m = member(mid);
+  const unpaid = owedByMe(mid); const toMe = owedToMe(mid);
+  const carry = carryOf(mid);
+  const supplyValue = 36; // 公共物品折价（在库消耗品估值）
+  const n = activeMembers().length;
+  const supplyShare = supplyValue / n;
+  const lines = [
+    { k:'押金退还', v: m.deposit, note:`${m.room} · 入住 ${dateCN(m.joined||'2026-06-01')}` },
+    { k:'未付账单', v: -unpaid.total, note: unpaid.items.map(x=>`${x.b.type} ${yuan(x.s)}`).join('，') || '无' },
+    { k:'待收账单', v: toMe.total, note: toMe.items.length? `${toMe.items.length} 笔` : '无' },
+    { k:'滚存差额', v: -carry, note: carry>0? '按规则本应多付，一次补齐' : carry<0? '按规则本应少付，一次退还' : '无差额' },
+    { k:'公共物品折价', v: supplyShare, note:`在库消耗品估值 ${yuan(supplyValue)} ÷ ${n} 人` },
+  ];
+  const total = lines.reduce((a,l)=>a+l.v,0);
+  return { lines, total };
+}
+/* 阈值 */
+function thresholdGap(){ const v = activeMembers().map(m=>S.chores.thresholds[m.id]).filter(x=>x); return v.length? Math.max(...v)-Math.min(...v) : 0; }
+/* 谁买得最多 */
+function buyerRanking(){
+  const t = {}; S.supplies.forEach(k=> k.buys.forEach(b=>{ t[b.by] = t[b.by]||{n:0,amt:0}; t[b.by].n++; t[b.by].amt+=b.amount; }));
+  return Object.entries(t).map(([id,v])=>({id,...v})).sort((a,b)=>b.amt-a.amt);
+}
+/* 额外清洁统计 */
+function extraStats(){ const t = {}; S.chores.extras.filter(x=>x.date.startsWith(MONTH)).forEach(x=>{ t[x.by]=(t[x.by]||0)+1; }); return t; }
+
+/* ============ UI framework ============ */
+const $ = sel => document.querySelector(sel);
+let sheets = []; // {render, full}
+function render(){
+  save();
+  renderTabbar();
+  const c = $('#content');
+  const scroll = c.scrollTop;
+  c.innerHTML = ({home:renderHome, ledger:renderLedger, chores:renderChores, supplies:renderSupplies, rules:renderRules})[S.tab]();
+  c.scrollTop = scroll;
+  renderOverlay();
+  renderConsole();
+}
+function go(tab){ S.tab = tab; $('#content').scrollTop = 0; render(); }
+function renderOverlay(){
+  const o = $('#overlay');
+  let html = '';
+  sheets.forEach((sh,i)=>{ html += `<div class="sheet-mask" onclick="if(event.target===this) closeSheet()"><div class="sheet ${sh.full?'full':''}">${sh.full?'':'<div class="grab"></div>'}${sh.render()}</div></div>`; });
+  if(S.pushes.length){ const p = S.pushes[S.pushes.length-1]; html += `<div class="push" onclick="if(!pushActions.length) dismissPush()"><div class="top"><span class="ic">合</span>合拍 · 刚刚</div><div class="ttl">${p.title}</div><div class="body">${p.body}</div>${p.actions?`<div class="acts">${p.actions.map((a,i)=>`<button class="${a.pri?'pri':''}" onclick="pushAct(${i})">${a.label}</button>`).join('')}</div>`:''}</div>`; }
+  if(toastMsg) html += `<div class="toast">${toastMsg}</div>`;
+  o.innerHTML = html;
+}
+function openSheet(renderFn, full=false){ sheets.push({render:renderFn, full}); renderOverlay(); }
+function closeSheet(){ sheets.pop(); renderOverlay(); }
+function closeAll(){ sheets = []; renderOverlay(); }
+let toastMsg = ''; let toastT = null;
+function toast(msg){ toastMsg = msg; renderOverlay(); clearTimeout(toastT); toastT = setTimeout(()=>{ toastMsg=''; renderOverlay(); }, 1800); }
+let pushActions = [];
+function push(title, body, actions){ pushActions = actions||[]; S.pushes.push({title, body, actions:(actions||[]).map(a=>({label:a.label,pri:a.pri}))}); renderOverlay(); if(!actions){ setTimeout(()=>{ S.pushes.pop(); renderOverlay(); }, 4200); } }
+function pushAct(i){ const a = pushActions[i]; S.pushes.pop(); pushActions=[]; if(a && a.fn) a.fn(); render(); }
+function dismissPush(){ S.pushes.pop(); render(); }
+
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M10 20v-5h4v5"/></svg>',
+  ledger:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+  chores:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3l7 7-9.5 9.5a3 3 0 0 1-4.2 0L4 16.2a3 3 0 0 1 0-4.2L14 3z"/><path d="M11 6l7 7"/></svg>',
+  supplies:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7h18l-1.5 13H4.5L3 7z"/><path d="M8 7a4 4 0 0 1 8 0"/></svg>',
+  rules:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.5 7.5-8 9-4.5-1.5-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></svg>',
+};
+function renderTabbar(){
+  const tabs = [['home','首页'],['ledger','账本'],['chores','值日'],['supplies','物资'],['rules','公约']];
+  const dot = { home: pendingForMe().length>0 };
+  $('#tabbar').innerHTML = tabs.map(([k,l])=>`<button class="${S.tab===k?'on':''}" onclick="go('${k}')">${ICONS[k]}<span>${l}${dot[k]?'<span class="notice-dot"></span>':''}</span></button>`).join('');
+}
+function header(title, sub){
+  const m = me();
+  return `<div class="hdr"><div><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div><button class="me-btn" onclick="openSheet(sheetWho)">${avatarHTML(m.id,'sm')}<span class="nm">${m.name}</span><span class="chev">▼</span></button></div>`;
+}
+function sheetWho(){
+  return `<h2>我是谁</h2><div class="sub">切换视角后，整个 App 按这个人看到的内容显示</div><div class="card"><div class="list">${activeMembers().map(m=>`<div class="row between" onclick="switchMe('${m.id}')"><div class="row">${avatarHTML(m.id)}<div class="col"><span class="t1">${m.name}</span><span class="t2">${m.room}${m.role?' · '+m.role:''}</span></div></div>${S.me===m.id?'<span class="pill y">当前</span>':'<span class="t3">切换</span>'}</div>`).join('')}${S.invitee.status!=='none'&&S.invitee.status!=='joined'?`<div class="row between" onclick="switchMe('xiaoya')"><div class="row">${avatarHTML('xiaoya')}<div class="col"><span class="t1">小雅</span><span class="t2">受邀新室友 · ${S.invitee.status==='invited'?'尚未开始入住流程':'入住流程中'}</span></div></div><span class="t3">切换</span></div>`:''}</div></div>`;
+}
+function switchMe(id){ S.me = id; closeAll(); if(id==='xiaoya' && S.invitee.status!=='joined'){ startOnboarding(); return; } render(); }
+
+/* ---------- pending for me ---------- */
+function pendingForMe(){
+  const my = S.me; const out = [];
+  S.facts.pending.filter(p=>p.member===my).forEach(p=> out.push({ kind:'fact', p }));
+  S.bills.filter(b=>b.payer===my).forEach(b=> billMembers(b).forEach(m=>{ if(m.id!==my && b.paid[m.id] && !(b.confirmed||{})[m.id]) out.push({kind:'receipt', b, who:m.id}); }));
+  if(S.chores.swapRequest && S.chores.swapRequest.from!==my) out.push({kind:'swap', r:S.chores.swapRequest});
+  if(S.rules.reviewPending && !S.rules.reviewAnswers[my]) out.push({kind:'review'});
+  if(S.ayi.status==='voting' && S.ayi.votes[my]===undefined) out.push({kind:'ayi'});
+  if(S.invitee.status==='asked' && my==='zhao' && !S.invitee.answered) out.push({kind:'ask'});
+  return out;
+}
+function pendingHTML(){
+  const items = pendingForMe(); if(!items.length) return '';
+  return `<div class="card"><h2>等我确认 <span class="pill r">${items.length}</span></h2><div class="list">${items.map(it=>{
+    if(it.kind==='fact'){ const p = it.p; return `<div class="col"><span class="t1">${nameOf(p.by)} 替你标记：${dateCN(p.from)}–${dateCN(p.to)} 不在家</span><span class="t2">${p.deadlineH} 小时内不反对将自动成立 · 值日自动换班、水电按天算</span><div class="btn-row" style="margin-top:8px"><button class="btn sm" onclick="confirmFact('${p.id}',true)">是的</button><button class="btn sm ghost" onclick="confirmFact('${p.id}',false)">有误</button></div></div>`; }
+    if(it.kind==='receipt'){ return `<div class="row between"><div class="col"><span class="t1">${nameOf(it.who)} 说已转你 ${it.b.type} ${yuan(collectShare(it.b,it.who))}</span><span class="t2">确认收到后账单关闭</span></div><button class="btn sm" onclick="confirmReceipt('${it.b.id}','${it.who}')">收到了</button></div>`; }
+    if(it.kind==='swap'){ const r = it.r; return `<div class="row between"><div class="col"><span class="t1">${nameOf(r.from)} 本周不在家，${r.area}谁接？</span><span class="t2">接了的人下轮少排一次，${nameOf(r.from)} 补一次</span></div><button class="btn sm" onclick="takeSwap()">我来接</button></div>`; }
+    if(it.kind==='review'){ return `<div class="row between"><div class="col"><span class="t1">规则回顾：请重新回答 6 道题</span><span class="t2">${S.rules.reviewReason||'成员变动触发'} · 各自独立作答</span></div><button class="btn sm" onclick="startReview()">作答</button></div>`; }
+    if(it.kind==='ayi'){ return `<div class="row between"><div class="col"><span class="t1">保洁试过一次了，继续每两周一次吗？</span><span class="t2">每次 ${yuan(S.ayi.price)}，${activeMembers().length} 人均摊 · 只有你能看到自己的选择</span></div><div class="row"><button class="btn sm" onclick="voteAyi(true)">继续</button><button class="btn sm ghost" onclick="voteAyi(false)">不用</button></div></div>`; }
+    if(it.kind==='ask'){ return `<div class="col"><span class="t1">小雅入住前想问一下</span><span class="t2">"${S.invitee.question}"（只发给了你）</span><div class="btn-row" style="margin-top:8px"><button class="btn sm" onclick="answerAsk()">回复</button></div></div>`; }
+    return '';
+  }).join('')}</div></div>`;
+}
+
+/* ================= HOME ================= */
+function renderHome(){
+  const my = S.me; const m = me();
+  const owe = owedByMe(my), toMe = owedToMe(my);
+  const myAreas = Object.entries(S.chores.rota).filter(([,w])=>w===my).map(([a])=>a);
+  const low = S.supplies.filter(k=>k.status!=='ok');
+  const gn = guestNights(my);
+  const carry = carryOf(my);
+  return `
+  ${header(S.house.name, `${dateCN(S.today)} · ${activeMembers().length} 位室友 · 公约 v${S.rules.version}`)}
+  ${pendingHTML()}
+  <div class="card y">
+    <h2>本月账 <span class="more" onclick="go('ledger')">看账本 ›</span></h2>
+    <div class="row between" style="align-items:flex-end">
+      <div><div class="t2" style="color:rgba(0,0,0,.6)">我该付</div><div class="big"><small>¥</small>${fmt1(owe.total)}</div><div class="t3" style="color:rgba(0,0,0,.55)">${owe.items.length? owe.items.map(x=>x.b.type).join(' · ') : '都付完了'}</div></div>
+      <div style="text-align:right"><div class="t2" style="color:rgba(0,0,0,.6)">该收我</div><div class="big" style="font-size:24px"><small>¥</small>${fmt1(toMe.total)}</div><div class="t3" style="color:rgba(0,0,0,.55)">${toMe.items.length? toMe.items.length+' 笔待收' : '—'}</div></div>
+    </div>
+    <div class="t3" style="color:rgba(0,0,0,.6);margin-top:10px">滚存差额 ${carry>0?'+':carry<0?'−':''}${yuan(carry)} · 小于 ¥${CARRY_LIMIT} 的差额不催，退租时一次结</div>
+  </div>
+  <div class="card">
+    <h2>我的状态</h2>
+    <div class="list">
+      <div class="row between"><div class="col"><span class="t1">这几天我不在家</span><span class="t2">值日自动换班 · 水电按天算 · 不再收到采购提醒</span></div><button class="toggle ${S.facts.awayNow[my]?'on':''}" onclick="toggleAway()"></button></div>
+      <div class="row between"><div class="col"><span class="t1">今晚有朋友来住</span><span class="t2">本月 ${gn} 晚 · 仅你可见，月底只显示总数进账单</span></div><button class="btn sm ghost" onclick="addGuestNight()">+1 晚</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>本周值日 <span class="more" onclick="go('chores')">排班 ›</span></h2>
+    ${myAreas.length? myAreas.map(a=>`<div class="row between"><div class="col"><span class="t1">${a}</span><span class="t2">${S.chores.standards[a]}</span></div><span class="pill y">本周轮到我</span></div>`).join('') : '<div class="t2">本周没有轮到你的区域</div>'}
+    <div class="btn-row"><button class="btn sm line" onclick="openSheet(sheetExtra)">我额外打扫了…</button></div>
+  </div>
+  ${low.length? `<div class="card"><h2>快没了 <span class="more" onclick="go('supplies')">物资 ›</span></h2><div class="chip-row">${low.map(k=>`<span class="chip">${k.name} <span class="pill ${k.status==='empty'?'r':'o'}">${k.status==='empty'?'空了':'快没了'}</span></span>`).join('')}</div><div class="t3" style="margin-top:8px">本周采购：${nameOf(S.supplyBuyer)}${S.supplyBuyer===my?'（你）':''}</div></div>`:''}
+  <div class="card"><h2>最近</h2><div>${S.log.slice(0,5).map(l=>`<div class="hist"><b>${dateCN(l.date)}</b> ${l.text}</div>`).join('')}</div></div>
+  <div class="changelog"><b>合拍 ${VERSION}</b> · 2026-09-14 首版：账本 / 值日 / 物资 / 公约 / 入住 / 退租 · <span class="link" onclick="openSheet(sheetChangelog)">更新记录</span></div>`;
+}
+function sheetChangelog(){ return `<h2>更新记录</h2><div class="sub">本链接固定不变，每次迭代在此追加</div><div class="card"><div class="hist"><b>v0.1 · 9月14日</b> 首版上线。分账六问、明细可解释、小额滚存、值日换班与额外清洁记功、阈值测量、请阿姨、物资入账、公约与回顾、新人入住、退租结算。</div><div class="hist"><b>9月12日</b> 占位页上线，链接确定。</div></div>`; }
+
+/* ---------- home actions ---------- */
+function toggleAway(){
+  const my = S.me; const on = !S.facts.awayNow[my]; S.facts.awayNow[my] = on;
+  if(on){
+    const from = S.today, to = addDays(S.today, 3);
+    S.facts.away.push({id:uid(), member:my, from, to, by:my, status:'confirmed'});
+    const myAreas = Object.entries(S.chores.rota).filter(([,w])=>w===my).map(([a])=>a);
+    if(myAreas.length && !S.chores.swapRequest){ S.chores.swapRequest = { area: myAreas[0], from: my, week: S.chores.weekStart }; }
+    logIt(`${nameOf(my)} 标记从今天起不在家`);
+    toast('已标记不在家 · 值日已发起换班');
+  } else {
+    S.facts.away = S.facts.away.filter(a=>!(a.member===my && a.from===S.today));
+    if(S.chores.swapRequest && S.chores.swapRequest.from===my) S.chores.swapRequest = null;
+    toast('欢迎回来');
+  }
+  render();
+}
+function addGuestNight(){ const my=S.me; S.facts.guests[my] = S.facts.guests[my]||[]; S.facts.guests[my].push(S.today); toast('已登记 · 仅你可见'); render(); }
+function confirmFact(id, ok){
+  const p = S.facts.pending.find(x=>x.id===id); if(!p) return;
+  S.facts.pending = S.facts.pending.filter(x=>x.id!==id);
+  if(ok){ S.facts.away.push({id:uid(), member:p.member, from:p.from, to:p.to, by:p.by, status:'confirmed'}); logIt(`${nameOf(p.member)} 确认 ${dateCN(p.from)}–${dateCN(p.to)} 不在家`); toast('已确认 · 水电按天、值日换班'); }
+  else { logIt(`${nameOf(p.member)} 表示 ${nameOf(p.by)} 的标记有误，已撤销`); toast('已撤销该标记'); }
+  render();
+}
+function confirmReceipt(bid, who){ const b = S.bills.find(x=>x.id===bid); b.confirmed = b.confirmed||{}; b.confirmed[who]=true; logIt(`${nameOf(S.me)} 确认收到 ${nameOf(who)} 的 ${b.type}`); toast('已确认收款'); render(); }
+
+/* ================= LEDGER ================= */
+function billStatus(b, mid){
+  if(b.payer===mid){ const others = billMembers(b).filter(m=>m.id!==mid); const unpaid = others.filter(m=>!b.paid[m.id]).length; return unpaid? {t:`待收 ${unpaid} 人`,c:'o'} : {t:'已收齐',c:'g'}; }
+  if(!(mid in splitBill(b).shares)) return {t:'不涉及',c:''};
+  if(b.paid[mid]) return (b.confirmed||{})[mid] ? {t:'已结',c:'g'} : {t:'待对方确认',c:'b'};
+  return S.today > b.due ? {t:'逾期',c:'r'} : {t:'待付',c:'y'};
+}
+function renderLedger(){
+  const my = S.me; const tr = netTransfers(); const carry = carryOf(my);
+  const bills = [...S.bills].sort((a,b)=> b.date.localeCompare(a.date));
+  return `${header('账本', `${MONTH.replace('-','年')}月 · 共 ${S.bills.length} 笔`)}
+  <div class="card">
+    <h2>净额结算 <span class="more">互相欠的抵掉后</span></h2>
+    ${tr.length? `<div class="list">${tr.map(t=>`<div class="row between"><div class="row">${avatarHTML(t.from,'sm')}<span class="t1">${nameOf(t.from)}</span><span class="t3">转给</span>${avatarHTML(t.to,'sm')}<span class="t1">${nameOf(t.to)}</span></div><span class="money ${t.to===my?'in':''}">${yuan(t.amt)}</span></div>`).join('')}</div>` : '<div class="empty">本月都结清了</div>'}
+  </div>
+  <div class="card">
+    <h2>滚存差额 <span class="more" onclick="openSheet(sheetCarry)">怎么算的 ›</span></h2>
+    <div class="row between"><div class="col"><span class="t1">${carry>0.005?'你按规则本应多付':carry<-0.005?'你按规则本应少付':'本月无差额'}</span><span class="t2">差额小于 ¥${CARRY_LIMIT} 的账单按均摊收，差额记在这里，退租时一次结</span></div><span class="money ${carry<0?'in':''}">${carry>0.005?'+':carry<-0.005?'−':''}${yuan(carry)}</span></div>
+  </div>
+  <button class="btn" style="margin-bottom:12px" onclick="openSheet(sheetNewBill)">＋ 记一笔</button>
+  <div class="card"><h2>账单</h2><div class="list">${bills.map(b=>{
+    const st = billStatus(b,my); const sp = splitBill(b); const mine = sp.shares[my];
+    return `<div class="row between" onclick="openBill('${b.id}')"><div class="row">${avatarHTML(b.payer,'sm')}<div class="col"><span class="t1">${b.type} <span class="t3">${dateCN(b.date)}</span></span><span class="t2">${nameOf(b.payer)} 付了 ${yuan(b.amount)} · ${sp.mode==='rule'?'按'+sp.ruleName:'均摊'+(sp.maxDiff>0.005?'，差额滚存':'')}</span></div></div><div class="col" style="align-items:flex-end"><span class="money ${b.payer===my?'in':''}">${b.payer===my? yuan(b.amount-mine) : mine!==undefined? yuan(collectShare(b,my)) : '—'}</span><span class="pill ${st.c}">${st.t}</span></div></div>`;
+  }).join('')}</div></div>`;
+}
+function sheetCarry(){
+  const my = S.me; const rows = S.bills.map(b=>({b,sp:splitBill(b)})).filter(x=>x.sp.mode==='equal' && Math.abs(x.sp.shares[my]-x.sp.equal[my])>0.005);
+  return `<h2>滚存差额</h2><div class="sub">规则算出来的份额和均摊差得很小的时候，不为几块钱单独转账、不催。差额记在每个人名下，退租结算时一次补齐或退还。</div>
+  <div class="card"><div class="list">${rows.length? rows.map(({b,sp})=>`<div class="row between"><div class="col"><span class="t1">${b.type} ${dateCN(b.date)}</span><span class="t2">按规则 ${yuan(sp.shares[my])} · 实收均摊 ${yuan(sp.equal[my])}</span></div><span class="money ${sp.shares[my]<sp.equal[my]?'in':''}">${sp.shares[my]>sp.equal[my]?'+':'−'}${yuan(sp.shares[my]-sp.equal[my])}</span></div>`).join('') : '<div class="empty">本月没有滚存的账单</div>'}</div></div>
+  <div class="note">差额 ≥ ¥${CARRY_LIMIT} 的账单（比如出差半个月的电费）直接按规则收款，不滚存。</div>`;
+}
+function openBill(id){ openSheet(()=>sheetBill(id)); }
+function sheetBill(id){
+  const b = S.bills.find(x=>x.id===id); const my = S.me; const sp = splitBill(b);
+  const ms = billMembers(b);
+  return `<h2>${b.type} ${yuan(b.amount)}</h2><div class="sub">${nameOf(b.payer)} 于 ${dateCN(b.date)} 垫付 · ${b.note||''} · ${dateCN(b.due)} 前结</div>
+  <div class="card"><h2>为什么我付这个数</h2><div class="detail">${sp.lines.map(l=>`<div class="ln"><span>${l.k}</span><span class="num">${l.v}</span></div>`).join('')}</div>
+  ${sp.mode==='equal' && sp.maxDiff>0.005 ? `<div class="note" style="margin-top:10px">差额都小于 ¥${CARRY_LIMIT}，本次按均摊每人 ${yuan(sp.equal[ms[0].id])} 收；规则份额与均摊的差额已记入各自的滚存。</div>` : sp.mode==='rule' && UTIL.includes(b.type) ? `<div class="note b" style="margin-top:10px">差额超过 ¥${CARRY_LIMIT}，本次直接按规则份额收款。</div>`:''}
+  </div>
+  <div class="card"><h2>谁付了</h2><div class="list">${ms.map(m=>{
+    const s = sp.shares[m.id]; if(s===undefined) return '';
+    const isPayer = m.id===b.payer; const paid = b.paid[m.id]; const conf = (b.confirmed||{})[m.id];
+    let act = '';
+    if(isPayer) act = '<span class="pill g">垫付人</span>';
+    else if(paid && conf) act = '<span class="pill g">已结</span>';
+    else if(paid) act = b.payer===my ? `<button class="btn sm" onclick="confirmReceipt('${b.id}','${m.id}')">收到了</button>` : '<span class="pill b">待确认</span>';
+    else act = m.id===my ? `<button class="btn sm" onclick="markPaid('${b.id}')">我已转账</button>` : `<span class="pill ${S.today>b.due?'r':'y'}">${S.today>b.due?'逾期':'待付'}</span>`;
+    return `<div class="row between"><div class="row">${avatarHTML(m.id,'sm')}<div class="col"><span class="t1">${m.name}</span><span class="t2">应付 ${yuan(collectShare(b,m.id))}${sp.mode==='equal'&&Math.abs(s-sp.equal[m.id])>0.005?` · 规则 ${yuan(s)}`:''}</span></div></div>${act}</div>`;
+  }).join('')}</div></div>
+  ${b.payer!==my && !b.paid[my] ? '<div class="t3" style="text-align:center">到期未付由系统提醒，不需要垫付人开口</div>':''}`;
+}
+function markPaid(bid){ const b = S.bills.find(x=>x.id===bid); b.paid[S.me]=true; logIt(`${nameOf(S.me)} 已转账 ${b.type} ${yuan(collectShare(b,S.me))} 给 ${nameOf(b.payer)}`); toast('已标记转账 · 等垫付人确认'); render(); }
+let nb = { type:'电费', amount:'', note:'' };
+function sheetNewBill(){
+  const types = ['电费','水费','燃气费','网费','物资','保洁','其他'];
+  return `<h2>记一笔</h2><div class="sub">分摊规则自动套用公约，录完每个人都能看到明细</div>
+  <div class="field"><label>类型</label><div class="seg">${types.map(t=>`<button class="${nb.type===t?'on':''}" onclick="nb.type='${t}';renderOverlay()">${t}</button>`).join('')}</div></div>
+  <div class="field"><label>金额（元）</label><input class="input" id="nbAmt" type="number" inputmode="decimal" placeholder="0.00" value="${nb.amount}" oninput="nb.amount=this.value"></div>
+  <div class="field"><label>备注</label><input class="input" id="nbNote" placeholder="比如：国网 App 截图 / 洗洁精" value="${nb.note}" oninput="nb.note=this.value"></div>
+  <div class="note">垫付人：${nameOf(S.me)}（你）· 套用规则：${UTIL.includes(nb.type)?'按人天（第 1、2 题）':nb.type==='物资'?'消耗品均摊（第 4 题）':nb.type==='保洁'?'保洁均摊（第 6 题）':'按人头均摊'}</div>
+  <button class="btn" onclick="addBill()">记入账本</button>`;
+}
+function addBill(){
+  const amt = parseFloat(nb.amount); if(!amt||amt<=0){ toast('填一下金额'); return; }
+  const kind = nb.type==='物资' ? '物资' : undefined; const type = nb.type==='物资' ? (nb.note||'物资') : nb.type;
+  const b = { id:uid(), type, kind, amount:amt, payer:S.me, date:S.today, due:addDays(S.today,7), note:nb.note, paid:{[S.me]:true}, confirmed:{} };
+  S.bills.push(b); logIt(`${nameOf(S.me)} 录入 ${type} ${yuan(amt)}`); nb = {type:'电费',amount:'',note:''}; closeAll(); toast('已入账 · 明细已生成'); render(); openBill(b.id);
+}
+
+/* ================= CHORES ================= */
+function renderChores(){
+  const my = S.me; const c = S.chores; const st = extraStats(); const gap = thresholdGap();
+  const monthExtras = c.extras.filter(x=>x.date.startsWith(MONTH)).sort((a,b)=>b.date.localeCompare(a.date));
+  return `${header('值日', `本周 ${dateCN(c.weekStart)} 起 · 只记录，不评判`)}
+  ${S.chores.swapRequest && S.chores.swapRequest.from!==my ? `<div class="card"><div class="row between"><div class="col"><span class="t1">${nameOf(c.swapRequest.from)} 本周不在家，${c.swapRequest.area}谁接？</span><span class="t2">接的人下轮少排一次，${nameOf(c.swapRequest.from)} 补一次 · 区域不能空着</span></div><button class="btn sm" onclick="takeSwap()">我来接</button></div></div>`:''}
+  <div class="card"><h2>本周轮值 <span class="more" onclick="openSheet(sheetStandards)">各区域标准 ›</span></h2>
+    <div class="week-grid">${c.areas.map(a=>{ const w = c.rota[a]; const sw = c.swaps.find(s=>s.week===c.weekStart&&s.area===a); return `<div class="area ${w===my?'mine':''}"><div class="an">${a}</div><div class="who">${avatarHTML(w,'sm')}<span>${nameOf(w)}</span>${sw?`<span class="swap">替 ${nameOf(sw.from)}</span>`:''}</div></div>`; }).join('')}</div>
+    ${c.swaps.filter(s=>s.week!==c.weekStart).slice(-1).map(s=>`<div class="t3" style="margin-top:10px">上周：${s.note}</div>`).join('')}
+  </div>
+  <div class="card"><h2>额外清洁 <span class="more">本月</span></h2>
+    <button class="btn line" style="margin-bottom:12px" onclick="openSheet(sheetExtra)">我额外打扫了…</button>
+    ${monthExtras.length? `<div class="list">${monthExtras.map(x=>`<div class="row between"><div class="row">${avatarHTML(x.by,'sm')}<div class="col"><span class="t1">${nameOf(x.by)} 打扫了${x.area}</span><span class="t2">${dateCN(x.date)}${c.rota[x.area]&&c.rota[x.area]!==x.by?` · 本周轮值 ${nameOf(c.rota[x.area])}`:''}${x.thanks.length?` · ${x.thanks.map(nameOf).join('、')}说了谢谢`:''}</span></div></div>${x.by!==my ? (x.thanks.includes(my)? '<span class="pill g">已谢</span>' : `<button class="btn sm ghost" onclick="thank('${x.id}')">谢谢</button>`) : `<span class="pill y">${x.thanks.length} 个谢谢</span>`}</div>`).join('')}</div>` : '<div class="empty">本月还没有额外清洁记录</div>'}
+    <div class="sec-title" style="margin-left:0">本月谁多做了</div>
+    ${activeMembers().map(m=>{ const n = st[m.id]||0; const max = Math.max(1,...Object.values(st)); return `<div class="row" style="margin-bottom:6px">${avatarHTML(m.id,'sm')}<span class="t2" style="width:44px">${m.name}</span><div class="bar" style="flex:1"><i style="width:${n/max*100}%"></i></div><span class="t2 num" style="width:32px;text-align:right">${n} 次</span></div>`; }).join('')}
+    <div class="t3" style="margin-top:8px">多做的人下轮少排一次；这里只记录，不催不罚。</div>
+  </div>
+  <div class="card"><h2>对"干净"的敏感度 <span class="more" onclick="openSheet(sheetThreshold)">我的测试 ›</span></h2>
+    <div class="thresh">${activeMembers().map(m=>{ const t = c.thresholds[m.id]||3; const h = (6-t)/5*100; return `<div class="c"><i style="height:${h}%" class="${t>=4?'lo':''}"></i>${avatarHTML(m.id,'sm')}<span>${m.name}</span></div>`; }).join('')}</div>
+    <div class="t3" style="margin-top:6px">柱子越高越先受不了。差距 ${gap} 档${gap>=3?'，差得比较远——先受不了的人会一直多做，这不是谁懒':''}。</div>
+  </div>
+  ${ayiCard()}`;
+}
+function sheetStandards(){ return `<h2>各区域标准</h2><div class="sub">建家时拍的"这样算干净"，用来对齐，不用来验收</div>${S.chores.areas.map(a=>`<div class="card"><div class="photo" style="--m:${a==='厨房'?'.12':a==='卫生间'?'.08':'.05'}"></div><div class="t1">${a}</div><div class="t2">${S.chores.standards[a]}</div></div>`).join('')}`; }
+let extraArea = '厨房';
+function sheetExtra(){
+  const my = S.me;
+  return `<h2>我额外打扫了…</h2><div class="sub">只报告自己做了什么，系统不会说任何人没做</div>
+  <div class="seg" style="margin-bottom:14px">${S.chores.areas.map(a=>`<button class="${extraArea===a?'on':''}" onclick="extraArea='${a}';renderOverlay()">${a}</button>`).join('')}</div>
+  <div class="note">记录后室友会看到"${nameOf(my)} 打扫了${extraArea}"，可以给你点个谢谢。${S.chores.rota[extraArea]!==my?`本周${extraArea}轮值是 ${nameOf(S.chores.rota[extraArea])}，他只会收到这条事实，不会收到批评。`:''}</div>
+  <button class="btn" onclick="addExtra()">记一笔</button>`;
+}
+function addExtra(){ S.chores.extras.push({id:uid(), by:S.me, area:extraArea, date:S.today, thanks:[]}); logIt(`${nameOf(S.me)} 额外清洁了${extraArea}`); closeAll(); toast('已记录'); S.tab='chores'; render(); }
+function thank(id){ const x = S.chores.extras.find(e=>e.id===id); if(!x.thanks.includes(S.me)) x.thanks.push(S.me); toast(`已向 ${nameOf(x.by)} 说谢谢`); render(); }
+function takeSwap(){ const r = S.chores.swapRequest; if(!r) return; S.chores.rota[r.area] = S.me; S.chores.swaps.push({id:uid(), week:r.week, area:r.area, from:r.from, to:S.me, note:`${nameOf(r.from)}不在家，${nameOf(S.me)}接${r.area}，${nameOf(r.from)}下周补一次`}); S.chores.swapRequest = null; logIt(`${nameOf(S.me)} 接了 ${nameOf(r.from)} 的${r.area}值日`); toast('已接手 · 下轮你少排一次'); render(); }
+function sheetThreshold(){
+  const my = S.me; const t = S.chores.thresholds[my];
+  const levels = ['台面有一两个杯子，地上有点头发','水槽里有昨晚的碗，台面有水渍','台面有油点，垃圾桶满了','碗泡了两天，地面发黏','碗泡了四天，有味道'];
+  return `<h2>哪一张会让你动手？</h2><div class="sub">建家时各自私下选的。它不评价谁对，只让大家看见"干净"在每个人眼里不一样。</div>
+  ${levels.map((l,i)=>`<div class="opt ${t===i+1?'on':''}" onclick="S.chores.thresholds['${my}']=${i+1};render();renderOverlay()"><div class="k">${i+1}</div><div class="col"><div class="photo" style="--m:${(i+1)*0.045};height:44px;margin:0 0 6px;width:100%"></div><span class="t2" style="color:#333">${l}</span></div></div>`).join('')}`;
+}
+/* ---- 请阿姨 ---- */
+function ayiCard(){
+  const a = S.ayi; const n = activeMembers().length; const each = a.price/n; const gap = thresholdGap();
+  if(a.status==='suggested'){
+    return `<div class="card"><h2>请个阿姨试一次？ <span class="pill y">系统建议</span></h2><div class="t2">这个屋子对干净的敏感度差 ${gap} 档。差得这么远的时候，让先受不了的人一直多做并不公平，很多合租屋选择把公共区域外包。</div>
+    <div class="row between" style="margin-top:12px"><div class="col"><span class="t1">保洁 2 小时 · ${yuan(a.price)}/次</span><span class="t2">${n} 人均摊每人 ${yuan(each)} · 自动进账本 · 值日只剩倒垃圾</span></div></div>
+    <div class="btn-row"><button class="btn" onclick="ayiTrial()">先试一次</button><button class="btn ghost" onclick="S.ayi.status='declined';render()">暂不</button></div>
+    <div class="t3" style="margin-top:8px">试完以后每个人私下决定要不要继续，没人需要先开口。</div></div>`;
+  }
+  if(a.status==='trial'){
+    return `<div class="card"><h2>保洁已预约 <span class="pill b">试一次</span></h2><div class="t2">${nameOf(a.trialBy)} 下单，${dateCN(a.nextDate)} 上门 · ${yuan(a.price)} 已入账本按 ${n} 人均摊</div><div class="t3" style="margin-top:8px">上门前一天会提醒大家收好私人物品；做完后各自投票是否继续。</div></div>`;
+  }
+  if(a.status==='voting'){
+    const voted = Object.keys(a.votes).length; const my = S.me;
+    return `<div class="card"><h2>继续每两周一次吗？ <span class="pill y">${voted}/${n} 已投</span></h2><div class="t2">每次 ${yuan(a.price)}，每人 ${yuan(each)}，自动入账。各自独立投票，投完只公布结果不公布谁投了什么。</div>
+    ${a.votes[my]===undefined ? `<div class="btn-row"><button class="btn" onclick="voteAyi(true)">继续</button><button class="btn ghost" onclick="voteAyi(false)">不用了</button></div>` : `<div class="t3" style="margin-top:10px">你已投票 · 等其他人</div>`}</div>`;
+  }
+  if(a.status==='active'){
+    return `<div class="card"><h2>保洁阿姨 <span class="pill g">每两周一次</span></h2><div class="row between"><div class="col"><span class="t1">下次上门 ${dateCN(a.nextDate)}</span><span class="t2">${yuan(a.price)} · ${n} 人均摊每人 ${yuan(each)} · 自动入账</span></div><button class="btn sm ghost" onclick="toast('演示环境 · 已跳转保洁服务')">改期</button></div><div class="t3" style="margin-top:8px">投票结果：${Object.values(a.votes).filter(v=>v).length} 人继续 · ${Object.values(a.votes).filter(v=>!v).length} 人不用。值日表已缩为倒垃圾 + 各洗各的碗。</div></div>`;
+  }
+  return `<div class="card"><h2>保洁 <span class="pill">未启用</span></h2><div class="t2">${a.status==='declined'&&Object.keys(a.votes).length?`上次投票 ${Object.values(a.votes).filter(v=>v).length} 人继续 · ${Object.values(a.votes).filter(v=>!v).length} 人不用，未通过。`:'暂不请阿姨。'}下次规则回顾时可以再议。</div></div>`;
+}
+function ayiTrial(){
+  const a = S.ayi; a.status='trial'; a.trialBy=S.me; a.nextDate=addDays(S.today,2);
+  S.bills.push({id:uid(), type:'保洁', amount:a.price, payer:S.me, date:S.today, due:addDays(S.today,7), note:'保洁 2 小时 · 试一次', paid:{[S.me]:true}, confirmed:{}});
+  logIt(`${nameOf(S.me)} 预约了一次保洁试试，费用已入账`); toast('已预约 · 费用已入账本'); render();
+}
+function voteAyi(yes){
+  const a = S.ayi; a.votes[S.me]=yes; const n = activeMembers().length;
+  if(Object.keys(a.votes).length>=n){ const y = Object.values(a.votes).filter(v=>v).length; if(y>n/2){ a.status='active'; a.nextDate=addDays(S.today,14); logIt('保洁投票通过，每两周一次自动入账'); } else { a.status='declined'; logIt('保洁投票未通过'); } }
+  toast('已投票 · 只有你能看到自己的选择'); render();
+}
+
+/* ================= SUPPLIES ================= */
+function renderSupplies(){
+  const my = S.me; const rk = buyerRanking(); const max = rk.length? rk[0].amt : 1;
+  return `${header('物资', `本周采购：${nameOf(S.supplyBuyer)}${S.supplyBuyer===my?'（你）':''} · 轮流`)}
+  <div class="card"><h2>公共物品 <span class="more">点状态即可更新</span></h2><div class="list">${S.supplies.map(k=>{ const last = k.buys[0]; return `<div class="row between"><div class="col"><span class="t1">${k.name}</span><span class="t2">${last?`上次 ${nameOf(last.by)} 买 · ${dateCN(last.date)} · ${yuan(last.amount)}`:'还没人买过'}</span></div><div class="row" style="gap:6px"><div class="seg" style="gap:4px">${[['ok','充足'],['low','快没了'],['empty','空了']].map(([s,l])=>`<button class="${k.status===s?'on':''}" style="padding:5px 8px;font-size:12px" onclick="setSupply('${k.id}','${s}')">${l}</button>`).join('')}</div></div></div>`; }).join('')}</div>
+  <button class="btn" style="margin-top:12px" onclick="openSheet(sheetBuy)">我买了东西</button></div>
+  <div class="card ranking"><h2>谁买得最多 <span class="more">近三个月</span></h2><div class="list">${rk.map((r,i)=>`<div class="row"><span class="rk ${i===0?'top':''}">${i+1}</span>${avatarHTML(r.id,'sm')}<div class="col" style="flex:1"><div class="row between"><span class="t1">${nameOf(r.id)}</span><span class="money">${yuan(r.amt)}</span></div><div class="bar" style="margin-top:4px"><i style="width:${r.amt/max*100}%"></i></div><span class="t3">${r.n} 次</span></div></div>`).join('')}</div>
+  <div class="t3" style="margin-top:10px">谁买了什么都进账本按人均摊；这一页只为了让默默买东西的人被看见。</div></div>`;
+}
+function setSupply(id, s){ const k = S.supplies.find(x=>x.id===id); k.status=s; if(s!=='ok') { toast(`已提醒本周采购人 ${nameOf(S.supplyBuyer)}`); } render(); }
+let buy = { item:'卫生纸', amount:'' };
+function sheetBuy(){
+  return `<h2>我买了东西</h2><div class="sub">填个金额，自动记进账本按人均摊，物品状态改为充足</div>
+  <div class="field"><label>买了什么</label><div class="seg">${S.supplies.map(k=>`<button class="${buy.item===k.name?'on':''}" onclick="buy.item='${k.name}';renderOverlay()">${k.name}</button>`).join('')}<button class="${!S.supplies.find(k=>k.name===buy.item)?'on':''}" onclick="buy.item='其他';renderOverlay()">其他</button></div></div>
+  <div class="field"><label>金额（元）</label><input class="input" type="number" inputmode="decimal" placeholder="0.00" value="${buy.amount}" oninput="buy.amount=this.value"></div>
+  <button class="btn" onclick="addBuy()">记入账本</button>`;
+}
+function addBuy(){
+  const amt = parseFloat(buy.amount); if(!amt||amt<=0){ toast('填一下金额'); return; }
+  let k = S.supplies.find(x=>x.name===buy.item); if(!k){ k = {id:uid(), name:'其他', status:'ok', buys:[]}; S.supplies.push(k); }
+  k.buys.unshift({by:S.me, amount:amt, date:S.today}); k.status='ok';
+  S.bills.push({id:uid(), type:k.name, kind:'物资', amount:amt, payer:S.me, date:S.today, due:addDays(S.today,30), note:'公共消耗品', paid:{[S.me]:true}, confirmed:{}});
+  logIt(`${nameOf(S.me)} 买了${k.name} ${yuan(amt)}，已入账`); buy={item:'卫生纸',amount:''}; closeAll(); toast('已入账 · 月底均摊'); render();
+}
+
+/* ================= RULES ================= */
+function tallyText(qid){ const a = S.rules.answers[qid]||{}; const cnt = {}; Object.values(a).forEach(v=>cnt[v]=(cnt[v]||0)+1); return Object.entries(cnt).sort((x,y)=>y[1]-x[1]).map(([k,v])=>`${v} 人选 ${k}`).join(' · '); }
+function actualText(qid){
+  const el = S.bills.find(b=>b.type==='电费');
+  if(qid==='q1'){ const away = activeMembers().map(m=>({m,d:awayDays(m.id)})).filter(x=>x.d>0); if(!away.length) return '本月没人长期不在家'; return away.map(x=>{ const sp = el? splitBill(el):null; return `${x.m.name}不在家 ${x.d} 天${sp?`，电费按 ${yuan(sp.shares[x.m.id])} 摊（均摊为 ${yuan(sp.equal[x.m.id])}）`:''}`; }).join('；'); }
+  if(qid==='q2'){ const g = activeMembers().map(m=>({m,n:guestNights(m.id)})).filter(x=>x.n>=3); if(!g.length) return '本月没有连住 3 晚以上的访客'; return g.map(x=>{ const sp = el? splitBill(el):null; return `${x.m.name}访客 ${x.n} 晚 × 0.5${sp?`，电费多摊 ${yuan(sp.shares[x.m.id]-sp.equal[x.m.id])}`:''}`; }).join('；'); }
+  if(qid==='q3') return `房租按房间：${activeMembers().map(m=>`${m.room} ${yuan(m.rent)}`).join(' / ')}`;
+  if(qid==='q4'){ const bs = S.bills.filter(b=>b.kind==='物资'); return bs.length? `本月 ${bs.length} 笔消耗品共 ${yuan(bs.reduce((a,b)=>a+b.amount,0))}，已均摊` : '本月无消耗品记账'; }
+  if(qid==='q5') return S.settlements.length? `${S.settlements.map(s=>`${nameOf(s.member)} ${dateCN(s.date)} 退租，结算 ${yuan(s.total)}`).join('；')}` : '本月无人退租';
+  if(qid==='q6'){ const n = S.chores.extras.filter(x=>x.date.startsWith(MONTH)).length; return `轮值中 · 本月额外清洁 ${n} 次${S.ayi.status==='active'?' · 保洁每两周一次':S.ayi.status==='trial'||S.ayi.status==='voting'?' · 保洁试用中':''}`; }
+  return '';
+}
+function renderRules(){
+  const r = S.rules; const my = S.me;
+  return `${header('公约', `v${r.version} · 自 ${dateCN(r.history[r.history.length-1].date)} · 大家住进来时同意的做法`)}
+  <div class="note">这不是合同，是这个家事先说好的算法。想改它只有一个办法：规则回顾时各自重新作答。</div>
+  ${r.reviewPending ? `<div class="card y"><h2>规则回顾进行中</h2><div class="t2" style="color:rgba(0,0,0,.7)">${r.reviewReason||''} · 已作答 ${Object.keys(r.reviewAnswers).length}/${activeMembers().length}</div>${r.reviewAnswers[my]?'<div class="t3" style="color:rgba(0,0,0,.6);margin-top:8px">你已作答 · 等其他人</div>':'<div class="btn-row"><button class="btn dark" onclick="startReview()">重新作答 6 题</button></div>'}</div>` : ''}
+  ${QUESTIONS.map((q,i)=>{ const cur = r.current[q.id]; return `<div class="card"><div class="q-num">第 ${i+1} 题</div><div class="t1" style="margin:4px 0 8px">${q.title}</div>
+    <div class="row" style="align-items:flex-start;gap:8px"><span class="pill ${cur===q.rec?'y':''}">${cur}</span><div class="col"><span style="font-size:14px">${q.opts[cur]}</span>${cur===q.rec?`<span class="t3">推荐项 · ${q.why}</span>`:`<span class="t3">推荐是 ${q.rec}：${q.opts[q.rec]}</span>`}</div></div>
+    <div class="detail" style="margin-top:10px"><div class="ln"><span>作答</span><span>${tallyText(q.id)}</span></div><div class="ln"><span>本月实际</span><span style="text-align:right;max-width:62%">${actualText(q.id)}</span></div></div></div>`; }).join('')}
+  <div class="card"><h2>补充条款</h2><div class="list">${EXTRA_RULES.map(e=>`<div class="row between"><span class="t1">${e.k}</span><span class="t2">${e.v}</span></div>`).join('')}</div></div>
+  <div class="card"><h2>什么时候回顾</h2><div class="list">
+    <div class="row between"><span class="t2">有人入住或退租</span><span class="pill r">必触发</span></div>
+    <div class="row between"><span class="t2">租约续签前一个月</span><span class="pill">2027 年 5 月</span></div>
+    <div class="row between"><span class="t2">换季且账单明显高于往月</span><span class="pill">6 月 / 11 月</span></div>
+    <div class="row between"><span class="t2">单月账单异常</span><span class="pill">自动</span></div>
+  </div><div class="t3" style="margin-top:8px">两次回顾至少隔两个月，可以"这次不用"。上次：${dateCN(r.lastReview)}。</div></div>
+  <div class="card"><h2>版本</h2>${[...r.history].reverse().map(h=>`<div class="hist"><b>v${h.v} · ${dateCN(h.date)}</b> ${h.note}</div>`).join('')}</div>
+  <div class="card"><h2>成员 <span class="more">${activeMembers().length} 人</span></h2>
+    ${activeMembers().map(m=>`<div class="member-row">${avatarHTML(m.id)}<div class="col" style="flex:1"><span class="t1">${m.name} ${m.id===my?'<span class="pill y">我</span>':''}</span><span class="t2">${m.room} · 房租 ${yuan(m.rent)} · 押金 ${yuan(m.deposit)} · ${dateCN(m.joined)} 入住</span></div><button class="btn sm ghost" onclick="openSettle('${m.id}')">退租结算</button></div>`).join('')}
+    ${S.left.map(id=>`<div class="member-row dim">${avatarHTML(id)}<div class="col" style="flex:1"><span class="t1">${nameOf(id)}</span><span class="t2">已退租</span></div></div>`).join('')}
+    ${S.invitee.status==='none' ? `<button class="btn ghost" style="margin-top:12px" onclick="inviteNew()">邀请新室友</button>` : S.invitee.status==='joined' ? '' : `<div class="note b" style="margin-top:12px">已邀请小雅 · ${S.invitee.status==='invited'?'等她打开链接完成入住流程':S.invitee.status==='asked'?'她入住前问了一个问题':'入住流程进行中'}</div>`}
+  </div>`;
+}
+
+/* ================= ONBOARDING（新人入住） ================= */
+let onb = null;
+function inviteNew(){ S.invitee.status='invited'; logIt('老赵向小雅发出入住邀请，她会先看到全部规则'); render(); openSheet(()=>`<h2>邀请已生成</h2><div class="sub">把链接发给小雅。她搬进来之前会看到这个家的全部规则和上月实际执行情况，逐条同意后才算加入。</div><div class="card"><div class="t2" style="word-break:break-all">hepai.app/join/wangjing-3ju?code=7K2M</div></div><button class="btn" onclick="closeAll()">好</button>`); }
+function startOnboarding(){
+  if(S.invitee.status==='none') S.invitee.status='invited';
+  if(S.invitee.status==='invited') S.invitee.status='onboarding';
+  onb = onb || { step:0, answers:{}, threshold:null, agreed:{}, question:'' };
+  sheets = []; openSheet(sheetOnb, true);
+}
+function sheetOnb(){
+  const st = onb.step; const total = 6;
+  const bar = (p)=>`<div class="progress"><i style="width:${p}%"></i></div>`;
+  if(st===0){
+    return `<h2>你好，小雅</h2><div class="sub">老赵邀请你加入「${S.house.name}」，房间：${S.invitee.room}。</div>
+    <div class="card"><div class="t1">搬进来之前，先做三件事</div><div class="list" style="margin-top:8px">
+      <div class="row"><span class="pill y">1</span><div class="col"><span class="t1">回答 6 道分账题</span><span class="t2">和现住的三个人一样，各自独立作答，不看别人答案</span></div></div>
+      <div class="row"><span class="pill y">2</span><div class="col"><span class="t1">选一张"哪张会让你动手"的图</span><span class="t2">只为了让大家知道彼此对干净的标准不同</span></div></div>
+      <div class="row"><span class="pill y">3</span><div class="col"><span class="t1">看现在的规则和这个月实际怎么算的</span><span class="t2">逐条同意才算加入；有疑问可以只问发起人</span></div></div>
+    </div></div>
+    <div class="note">这些规矩不写出来，住进去一样得守，还得靠猜。写出来了，起码知道自己同意的是什么。</div>
+    <button class="btn" onclick="onb.step=1;renderOverlay()">开始</button>
+    <div class="t3" style="text-align:center;margin-top:10px" onclick="onbExit()">先不看</div>`;
+  }
+  if(st>=1 && st<=6){
+    const q = QUESTIONS[st-1]; const a = onb.answers[q.id];
+    return `${bar(st/8*100)}<div class="q-num">第 ${st} / 6 题</div><div class="q-title">${q.title}</div>
+    ${Object.entries(q.opts).map(([k,v])=>`<div class="opt ${a===k?'on':''}" onclick="onb.answers['${q.id}']='${k}';renderOverlay()"><div class="k">${k}</div><div class="col"><span>${v}</span>${k===q.rec?`<span class="why">推荐 · ${q.why}</span>`:''}</div></div>`).join('')}
+    <div class="btn-row"><button class="btn ghost" onclick="onb.step--;renderOverlay()">上一步</button><button class="btn" ${a?'':'disabled'} onclick="onb.step++;renderOverlay()">下一题</button></div>
+    <div class="t3" style="text-align:center;margin-top:10px">你的答案只有系统能看到，汇总时只显示"几人选了什么"</div>`;
+  }
+  if(st===7){
+    const levels = ['台面有一两个杯子，地上有点头发','水槽里有昨晚的碗，台面有水渍','台面有油点，垃圾桶满了','碗泡了两天，地面发黏','碗泡了四天，有味道'];
+    return `${bar(7/8*100)}<div class="q-num">敏感度</div><div class="q-title">厨房到哪一张，你会动手收拾？</div>
+    ${levels.map((l,i)=>`<div class="opt ${onb.threshold===i+1?'on':''}" onclick="onb.threshold=${i+1};renderOverlay()"><div class="k">${i+1}</div><div class="col" style="flex:1"><div class="photo" style="--m:${(i+1)*0.045};height:44px;margin:0 0 6px;width:100%"></div><span class="t2" style="color:#333">${l}</span></div></div>`).join('')}
+    <div class="btn-row"><button class="btn ghost" onclick="onb.step--;renderOverlay()">上一步</button><button class="btn" ${onb.threshold?'':'disabled'} onclick="onb.step++;renderOverlay()">下一步</button></div>`;
+  }
+  if(st===8){
+    const r = S.rules; const all = QUESTIONS.every(q=>onb.agreed[q.id]);
+    return `${bar(100)}<div class="q-num">现行规则 v${r.version}</div><div class="q-title">这是他们现在的做法，逐条看一下</div>
+    ${QUESTIONS.map((q,i)=>{ const cur = r.current[q.id]; const mine = onb.answers[q.id]; return `<div class="card" style="padding:12px"><div class="row between" style="align-items:flex-start"><div class="col" style="flex:1"><span class="t3">第 ${i+1} 题 · ${q.title}</span><span class="t1" style="margin-top:2px">${cur} · ${q.opts[cur]}</span><span class="t2" style="margin-top:4px">本月实际：${actualText(q.id)}</span>${mine&&mine!==cur?`<span class="t3" style="color:var(--orange);margin-top:2px">你选的是 ${mine}，入住会触发一次全员回顾，到时各自重答</span>`:''}</div></div>
+      <div class="btn-row" style="margin-top:8px"><button class="btn sm ${onb.agreed[q.id]?'':'ghost'}" onclick="onb.agreed['${q.id}']=true;renderOverlay()">${onb.agreed[q.id]?'✓ 同意':'同意'}</button><button class="btn sm ghost" onclick="openAsk('${q.id}')">入住前想问一下</button></div></div>`; }).join('')}
+    <div class="card" style="padding:12px"><span class="t3">补充条款</span>${EXTRA_RULES.map(e=>`<div class="t2" style="margin-top:4px">${e.k}：${e.v}</div>`).join('')}</div>
+    <button class="btn" ${all?'':'disabled'} onclick="finishOnb()">全部同意，加入这个家</button>
+    <div class="t3" style="text-align:center;margin-top:10px">${all?'':'还有 '+QUESTIONS.filter(q=>!onb.agreed[q.id]).length+' 条没点同意'}</div>`;
+  }
+  return '';
+}
+function onbExit(){ closeAll(); S.me='zhao'; render(); }
+let askQ = '';
+function openAsk(qid){
+  askQ = '';
+  openSheet(()=>`<h2>入住前想问一下</h2><div class="sub">只会发给发起人老赵一个人，其他人看不到你问了什么。</div>
+  <div class="field"><label>关于第 ${QUESTIONS.findIndex(q=>q.id===qid)+1} 题</label><textarea class="input" rows="3" placeholder="比如：垃圾站在哪？拖把放哪？" oninput="askQ=this.value">${askQ}</textarea></div>
+  <button class="btn" onclick="sendAsk()">只发给老赵</button>`);
+}
+function sendAsk(){ if(!askQ.trim()){ toast('写点什么'); return; } S.invitee.question = askQ.trim(); S.invitee.status='asked'; S.invitee.answered=false; logIt('小雅入住前问了老赵一个问题（仅老赵可见）'); closeSheet(); toast('已发给老赵，只有他能看到'); }
+function answerAsk(){ S.invitee.answered = true; S.invitee.status = S.invitee.joinedAt? 'joined':'onboarding'; toast('已回复小雅'); logIt('老赵回复了小雅的问题'); render(); }
+function finishOnb(){
+  const inv = S.invitee;
+  const m = { id:inv.id, name:inv.name, short:inv.short, color:inv.color, room:inv.room, rent:inv.rent, deposit:inv.deposit, weight:inv.weight, role:'新室友', joined:S.today };
+  // 冻结既有账单的参与人
+  S.bills.forEach(b=>{ if(!b.members) b.members = activeMembers().map(x=>x.id); });
+  S.members.push(m); inv.status='joined'; inv.joinedAt=S.today;
+  S.chores.thresholds[m.id] = onb.threshold;
+  // 触发回顾：小雅的答案已作为她的作答
+  S.rules.reviewPending = true; S.rules.reviewReason = '小雅入住触发'; S.rules.reviewAnswers = { [m.id]: {...onb.answers} };
+  logIt('小雅完成入住流程，已加入；成员变动触发规则回顾');
+  onb = null; closeAll(); S.tab='home';
+  push('欢迎加入', '你已加入「望京 · 融科橄榄城 3 居」。其他人会重新回答 6 道题，结果出来前沿用现行规则。');
+  render();
+}
+
+/* ================= REVIEW（规则回顾） ================= */
+let rv = null;
+function triggerReview(reason){ S.rules.reviewPending = true; S.rules.reviewReason = reason; S.rules.reviewAnswers = S.rules.reviewAnswers && S.rules.reviewPending ? S.rules.reviewAnswers : {}; logIt(`规则回顾：${reason}`); }
+function startReview(){ rv = { step:0, answers:{} }; openSheet(sheetReview, true); }
+function sheetReview(){
+  const q = QUESTIONS[rv.step]; const a = rv.answers[q.id]; const cur = S.rules.current[q.id];
+  return `<div class="progress"><i style="width:${(rv.step+1)/6*100}%"></i></div><div class="q-num">规则回顾 · 第 ${rv.step+1} / 6 题</div><div class="q-title">${q.title}</div>
+  ${Object.entries(q.opts).map(([k,v])=>`<div class="opt ${a===k?'on':''}" onclick="rv.answers['${q.id}']='${k}';renderOverlay()"><div class="k">${k}</div><div class="col"><span>${v}</span>${k===cur?'<span class="tally">现行</span>':''}${k===q.rec?`<span class="why">推荐 · ${q.why}</span>`:''}</div></div>`).join('')}
+  <div class="btn-row">${rv.step>0?`<button class="btn ghost" onclick="rv.step--;renderOverlay()">上一步</button>`:`<button class="btn ghost" onclick="closeAll()">稍后</button>`}<button class="btn" ${a?'':'disabled'} onclick="${rv.step<5?'rv.step++;renderOverlay()':'finishReview()'}">${rv.step<5?'下一题':'提交'}</button></div>
+  <div class="t3" style="text-align:center;margin-top:10px">没有人在提议什么，只是各自重新选一次。汇总只显示几人选了什么。</div>`;
+}
+function finishReview(){
+  S.rules.reviewAnswers[S.me] = {...rv.answers}; rv = null; closeAll();
+  const ms = activeMembers().map(m=>m.id);
+  if(ms.every(id=>S.rules.reviewAnswers[id])){
+    const changes = [];
+    QUESTIONS.forEach(q=>{ const cnt = {}; ms.forEach(id=>{ const v = S.rules.reviewAnswers[id][q.id]; cnt[v]=(cnt[v]||0)+1; }); const best = Object.entries(cnt).sort((a,b)=>b[1]-a[1]); const top = best[0]; const tie = best[1] && best[1][1]===top[1]; const win = tie ? S.rules.current[q.id] : top[0]; if(win!==S.rules.current[q.id]) changes.push(`第 ${QUESTIONS.indexOf(q)+1} 题 ${S.rules.current[q.id]} → ${win}`); S.rules.current[q.id]=win; S.rules.answers[q.id] = {}; ms.forEach(id=> S.rules.answers[q.id][id]=S.rules.reviewAnswers[id][q.id]); });
+    S.rules.version++; S.rules.history.push({v:S.rules.version, date:S.today, note:`${S.rules.reviewReason}，${activeMembers().length} 人重答。${changes.length? changes.join('；') : '规则无变化'}`});
+    S.rules.reviewPending=false; S.rules.lastReview=S.today; S.rules.reviewAnswers={};
+    logIt(`规则回顾完成 → v${S.rules.version}${changes.length?'：'+changes.join('；'):'，无变化'}`);
+    push('规则回顾完成', changes.length? `公约更新为 v${S.rules.version}：${changes.join('；')}` : `${activeMembers().length} 人重答，规则没有变化，公约 v${S.rules.version}`);
+  } else { toast('已提交 · 等其他人作答'); }
+  render();
+}
+
+/* ================= SETTLEMENT（退租） ================= */
+function openSettle(mid){ openSheet(()=>sheetSettle(mid)); }
+function sheetSettle(mid){
+  const m = member(mid); const s = settlement(mid);
+  return `<h2>${m.name} 退租结算单</h2><div class="sub">按第 5 题：未结账单、滚存差额、押金份额、公共物品折价，一次算清</div>
+  <div class="card"><table class="settle-tbl">${s.lines.map(l=>`<tr><td><div>${l.k}</div><div class="t3">${l.note}</div></td><td class="${l.v<0?'':'money in'}" style="${l.v<0?'color:var(--orange)':''}">${l.v<-0.005?'−':l.v>0.005?'+':''}${yuan(l.v)}</td></tr>`).join('')}<tr class="total"><td>${s.total>=0?'应退给 '+m.name:m.name+' 应补'}</td><td>${yuan(s.total)}</td></tr></table></div>
+  <div class="note">确认后：${m.name} 退出账本，值日表重排，剩下的人触发一次规则回顾。既有账单的分摊人不变。</div>
+  <div class="btn-row"><button class="btn ghost" onclick="closeSheet()">只是看看</button><button class="btn dark" onclick="confirmSettle('${mid}')">确认退租</button></div>`;
+}
+function confirmSettle(mid){
+  const s = settlement(mid);
+  S.bills.forEach(b=>{ if(!b.members) b.members = activeMembers().map(x=>x.id); });
+  S.left.push(mid); S.settlements.push({member:mid, date:S.today, total:s.total});
+  const rest = activeMembers().map(m=>m.id);
+  Object.keys(S.chores.rota).forEach((a,i)=>{ if(S.chores.rota[a]===mid) S.chores.rota[a] = rest[i%rest.length]; });
+  if(S.chores.swapRequest && S.chores.swapRequest.from===mid) S.chores.swapRequest=null;
+  if(S.supplyBuyer===mid) S.supplyBuyer = rest[0];
+  if(S.me===mid) S.me = rest[0];
+  triggerReview(`${nameOf(mid)} 退租触发`);
+  logIt(`${nameOf(mid)} 办理退租，结算 ${s.total>=0?'退':'补'} ${yuan(s.total)}`);
+  closeAll(); toast('已结算 · 剩余成员将重答规则'); S.tab='home'; render();
+}
+
+/* ================= DEMO CONSOLE ================= */
+function renderConsole(){
+  const el = $('#console'); if(!el) return;
+  const who = [...activeMembers().map(m=>m.id), ...(S.invitee.status!=='none'&&S.invitee.status!=='joined'?['xiaoya']:[])];
+  el.innerHTML = `<h3>演示控制台</h3><p class="hint">屏幕外的遥控器。左边是正常 App，这里替"世界"发生事情。</p>
+  <div class="grp"><b>当前身份</b><div class="row">${who.map(id=>`<button class="who ${S.me===id?'on':''}" onclick="switchMe('${id}')">${nameOf(id)}</button>`).join('')}</div></div>
+  <div class="grp"><b>推送</b><div class="row">
+    <button onclick="demoGeo()">定位：大力连续 24h 不在家</button>
+    <button onclick="demoBack()">定位：大力回到家附近</button>
+    <button onclick="demoDun()">系统催款：阿杰电费逾期</button>
+    <button onclick="demoBuyPush()">采购提醒：垃圾袋空了</button>
+    <button onclick="demoAyiPush()">保洁上门前一天提醒</button>
+  </div></div>
+  <div class="grp"><b>事件</b><div class="row">
+    <button onclick="demoInvite()">小雅收到入住邀请</button>
+    <button onclick="openSettle('dali')">大力办理退租</button>
+    <button onclick="demoReview()">触发规则回顾（换季账单异常）</button>
+    <button onclick="demoAyiDone()">保洁做完了 → 各自投票</button>
+  </div></div>
+  <div class="grp"><b>时间</b><div class="row">
+    <button onclick="ff48()">快进 48 小时（待确认自动成立）</button>
+    <button onclick="nextWeek()">下一周（轮值滚动）</button>
+    <button onclick="monthEnd()">月底：私下确认访客晚数</button>
+  </div></div>
+  <div class="grp"><b>状态</b>
+    <div class="kv"><span>今天</span><span>${S.today}</span></div>
+    <div class="kv"><span>身份</span><span>${nameOf(S.me)}</span></div>
+    <div class="kv"><span>公约</span><span>v${S.rules.version}${S.rules.reviewPending?' · 回顾中':''}</span></div>
+    <div class="kv"><span>等确认</span><span>${pendingForMe().length}</span></div>
+    <div class="row" style="margin-top:10px"><button class="y" onclick="if(confirm('重置为演示初始数据？')){resetAll();sheets=[];render();}">重置演示数据</button></div>
+  </div>`;
+}
+function demoGeo(){ switchMe('dali'); push('你不在家吗？', '检测到你连续 24 小时不在家附近（仅本机判断，位置不共享）。标记为不在家后：值日自动换班、水电按天算。', [ {label:'不是', fn:()=>toast('好的，不标记')}, {label:'是的，出差了', pri:true, fn:()=>{ if(!S.facts.awayNow.dali){ S.me='dali'; toggleAway(); } }} ]); }
+function demoBack(){ switchMe('dali'); push('欢迎回来', '检测到你回到家附近。从今天起按在家算？', [ {label:'还没', fn:()=>{}}, {label:'是的', pri:true, fn:()=>{ if(S.facts.awayNow.dali){ S.me='dali'; toggleAway(); } }} ]); }
+function demoDun(){ const b = S.bills.find(x=>x.type==='电费'); if(!b) return; S.today = addDays(b.due, 2); b.paid.ajie=false; switchMe('ajie'); push('电费待支付', `9 月电费你的份额 ${yuan(collectShare(b,'ajie'))}，已过约定日期 2 天。这条提醒由系统发出，老赵没有催。`, [ {label:'稍后', fn:()=>{}}, {label:'查看明细', pri:true, fn:()=>openBill(b.id)} ]); }
+function demoBuyPush(){ const k = S.supplies.find(x=>x.name==='垃圾袋'); k.status='empty'; switchMe(S.supplyBuyer); push('垃圾袋空了', `本周采购轮到你。买了在物资页填个金额，自动进账本均摊。`, [ {label:'知道了', fn:()=>{}}, {label:'我买了', pri:true, fn:()=>{ buy={item:'垃圾袋',amount:''}; go('supplies'); openSheet(sheetBuy); }} ]); }
+function demoAyiPush(){ if(S.ayi.status==='suggested'||S.ayi.status==='declined'){ S.ayi.status='trial'; S.ayi.trialBy='zhao'; S.ayi.nextDate=addDays(S.today,1); } push('阿姨明天上门', `${dateCN(S.ayi.nextDate)} 10:00 保洁 2 小时。私人物品收进房间，公共区域会全部打扫。费用 ${yuan(S.ayi.price)} 已按 ${activeMembers().length} 人均摊入账。`); render(); }
+function demoAyiDone(){ if(S.ayi.status!=='trial'){ S.ayi.status='trial'; S.ayi.trialBy='zhao'; } S.ayi.status='voting'; S.ayi.votes={}; logIt('保洁试用完成，各自投票是否继续'); push('保洁做完了', '继续每两周一次吗？各自私下投票，只公布结果。'); go('chores'); }
+function demoInvite(){ if(S.invitee.status==='none') inviteNew(); closeAll(); onb=null; switchMe('xiaoya'); }
+function demoReview(){ if(S.rules.reviewPending){ toast('已在回顾中'); return; } triggerReview('换季，9 月电费比前三月均值高 42%'); push('要不要看看分摊方式？', '9 月电费比前三个月平均高了 42%。这是例行回顾，各自重新回答 6 道题，没有人在提议什么。'); render(); }
+function ff48(){ const ps = [...S.facts.pending]; ps.forEach(p=>{ S.facts.pending = S.facts.pending.filter(x=>x.id!==p.id); S.facts.away.push({id:uid(), member:p.member, from:p.from, to:p.to, by:p.by, status:'confirmed'}); logIt(`${nameOf(p.member)} 48 小时未反对，${dateCN(p.from)}–${dateCN(p.to)} 不在家自动成立`); }); S.today = addDays(S.today,2); toast(ps.length? `${ps.length} 条待确认已自动成立` : '没有待确认的事'); render(); }
+function nextWeek(){ const c = S.chores; const ms = activeMembers().map(m=>m.id); const order = c.areas.map(a=>c.rota[a]); const shifted = c.areas.map((a,i)=> order[(i+order.length-1)%order.length]); c.areas.forEach((a,i)=> c.rota[a]=shifted[i]); c.weekStart = addDays(c.weekStart,7); c.swapRequest=null; S.today = addDays(S.today,7); Object.keys(S.facts.awayNow).forEach(k=>S.facts.awayNow[k]=false); const i = ms.indexOf(S.supplyBuyer); S.supplyBuyer = ms[(i+1)%ms.length]; toast('已到下一周 · 轮值已滚动'); render(); }
+function monthEnd(){ switchMe('ajie'); const n = guestNights('ajie'); push('月底对一下', `本月你登记了 ${n} 晚访客，按规则计 ${n*0.5} 人天。确认吗？只有你和系统知道逐晚记录，账单里只出现总数。`, [ {label:'有出入', fn:()=>toast('可以在首页改登记')}, {label:'确认', pri:true, fn:()=>toast('已确认 · 进本月账单')} ]); }
+
+/* ================= INIT ================= */
+load();
+document.getElementById('consoleFab').onclick = ()=> document.getElementById('console').classList.toggle('open');
+document.addEventListener('click', e=>{ const c = document.getElementById('console'); if(c.classList.contains('open') && !c.contains(e.target) && e.target.id!=='consoleFab') c.classList.remove('open'); });
+render();
+
+</script>
 </body>
 </html>
