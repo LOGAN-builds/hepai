@@ -17,7 +17,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
   --orange:#FF6A00; --green:#1FA36A; --red:#E5423C; --blue:#3A7BD5; --tag:#F3F4F6;
 }
 /* ---- stage: phone + console ---- */
-.stage{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;gap:28px;padding:28px 16px}
+.stage{display:flex;align-items:flex-start;justify-content:center;gap:24px;padding:16px 16px 24px;zoom:var(--fit,1)}
 .device,.console{align-self:center}
 .device{position:relative;width:402px;height:874px;background:#000;border-radius:56px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.35),0 0 0 2px #2a2a2a inset;flex:0 0 auto}
 .device .screen{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--bg)}
@@ -46,7 +46,10 @@ input,select,textarea{font-family:inherit;font-size:16px}
   .console{display:none}
   .console.open{display:flex;position:fixed;inset:auto 0 0 0;width:100%;max-height:70vh;border-radius:16px 16px 0 0;z-index:500;overflow:auto}
   .console-fab{display:flex !important}
-  .guide{width:auto;max-height:none;border-radius:0;margin:0}
+  .side{width:auto;max-height:none;padding:12px}
+  .stage{zoom:1}
+  .topbar{flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px}
+  .topbar .qr{display:none}
 }
 .console-fab{display:none;position:fixed;right:14px;bottom:100px;width:44px;height:44px;border-radius:22px;background:#222;color:#fff;align-items:center;justify-content:center;z-index:400;box-shadow:0 6px 18px rgba(0,0,0,.25);font-size:18px}
 
@@ -223,11 +226,15 @@ input,select,textarea{font-family:inherit;font-size:16px}
 .carry-tiles .tile .v{font-size:18px}
 
 /* ---- guide (roles + demo route) ---- */
-.guide{width:300px;flex:0 0 auto;background:#fff;border-radius:16px;padding:16px 16px 18px;font-size:13px;color:#333;max-height:874px;overflow:auto;scrollbar-width:thin;align-self:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.guide h3{margin:0 0 10px;font-size:14px;color:#111;letter-spacing:.04em}
-.guide .grp{border-top:1px solid #EEE;padding-top:12px;margin-top:12px}
-.guide .grp:first-child{border-top:0;padding-top:0;margin-top:0}
-.guide .grp b.lbl{display:block;font-size:11px;color:#999;letter-spacing:.12em;margin-bottom:8px;font-weight:600}
+.side{display:flex;flex-direction:column;gap:16px;width:300px;flex:0 0 auto;align-self:center;max-height:874px}
+.panel{background:#fff;border-radius:16px;padding:16px 16px 18px;font-size:13px;color:#333;overflow:auto;scrollbar-width:thin;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+#roles{flex:0 0 auto}
+#route{flex:1 1 auto;min-height:0}
+.panel h3{margin:0 0 10px;font-size:14px;color:#111;letter-spacing:.04em}
+.panel .grp{border-top:1px solid #EEE;padding-top:12px;margin-top:12px}
+.panel .grp:first-child{border-top:0;padding-top:0;margin-top:0}
+.panel h3.lbl{font-size:12px;color:#999;letter-spacing:.12em;font-weight:600;margin-bottom:10px}
+.panel .grp b.lbl{display:block;font-size:11px;color:#999;letter-spacing:.12em;margin-bottom:8px;font-weight:600}
 .role{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed #F0F0F0}
 .role:last-child{border-bottom:0}
 .role .avatar{width:28px;height:28px;font-size:12px;margin-top:1px}
@@ -246,9 +253,25 @@ input,select,textarea{font-family:inherit;font-size:16px}
 
 .sheet.settled,.sheet-mask.settled,.push.settled{animation:none}
 
+/* ---- top bar ---- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 28px;background:#fff;border-bottom:1px solid #E6E6E6}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{width:38px;height:38px;border-radius:10px;background:var(--y);display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:#111;flex:0 0 auto}
+.brand b{display:block;font-size:18px;color:#111}
+.brand span{font-size:13px;color:#666}
+.topmeta{display:flex;align-items:center;gap:20px}
+.topmeta .qr{display:flex;align-items:center;gap:8px;font-size:11px;color:#888}
+.topmeta .qr img{width:56px;height:56px;border-radius:6px;border:1px solid #EEE}
+.topmeta .ver{display:flex;flex-direction:column;align-items:flex-end;font-size:11.5px;color:#888;line-height:1.5}
+.topmeta .ver b{color:#111;font-size:13px}
+
 </style>
 </head>
 <body>
+<header class="topbar">
+  <div class="brand"><span class="logo">合</span><div><b>合拍</b><span>合租生活管家 · 让账、活、物、规矩都由系统说了算，室友之间不用再开口</span></div></div>
+  <div class="topmeta"><div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPgAAAD4CAIAAABOs7xcAAAEy0lEQVR4nO3dwW0lNxBAQctwBMo/RqXwnYB5oEEuSb2q6wqjL+mBh16i5+vz+fwFv93fpz8A/AlCJ0HoJAidBKGTIHQShE7CP6N/+P7+/pOf43/7+flZ8pxVP+/o84yef+rrZ73egxOdBKGTIHQShE6C0EkQOglCJ2E4Rx9ZNZedNTvH3T1Xnv2+t1n1+3mlByc6CUInQegkCJ0EoZMgdBKETsL0HH1k933uVWY/5+774rvn2afm+rf14EQnQegkCJ0EoZMgdBKEToLQSVg2R3/dqXvVI6vm/bfN109xopMgdBKEToLQSRA6CUInQegk/No5+u758e495bufU+NEJ0HoJAidBKGTIHQShE6C0ElYNke/7T73yG3z7N2/t1N/l9t6cKKTIHQShE6C0EkQOglCJ0HoJEzP0V+537xqf/nur19l9+ef/b63caKTIHQShE6C0EkQOglCJ0HoJHx9Pp/Tn2GLU++5PHXv/Lb3et7GiU6C0EkQOglCJ0HoJAidBKGTMLyPfmoePLLq8+y+b73qPvor9+ZP3V+f/b5OdBKEToLQSRA6CUInQegkCJ2E4Rz91H6Skd37SV43+3c5tdflVFdOdBKEToLQSRA6CUInQegkCJ2E7XtdbpuznrrnPXLqOaf2u5/6/w0nOglCJ0HoJAidBKGTIHQShE6C/eiLnbo3f2ofy6n9MLOc6CQInQShkyB0EoROgtBJEDoJy+bot92HfmW/+Mju+forn39k9udyopMgdBKEToLQSRA6CUInQegkDPejj+y+571q7ntqfrzKqfvrq34/p/avjzjRSRA6CUInQegkCJ0EoZMgdBKG99Ffn0Of2pey26n94qf23K/6eZ3oJAidBKGTIHQShE6C0EkQOgnD++ivvO9zZPd97tvmxKus+vvedt/diU6C0EkQOglCJ0HoJAidBKGTsP0++iv70WefM+vUfvfbuI8OGwmdBKGTIHQShE6C0EkQOgnT+9Fn7b5n/Mp7MV/Z737b81fN3Z3oJAidBKGTIHQShE6C0EkQOgnb3zN66j767v0kv9Xu++Kn3j/qRCdB6CQInQShkyB0EoROgtBJWLbXZeSVfeGv7H0feWWvzilOdBKEToLQSRA6CUInQegkCJ2E7fvRZ+1+/iqvz/tPOdWPE50EoZMgdBKEToLQSRA6CUInYThHf91t7xO97V74qfvxI7v/X8KJToLQSRA6CUInQegkCJ0EoZMwfR/9NrfNfU/93m6bu9/2/lcnOglCJ0HoJAidBKGTIHQShE7C9HtGX99ncmpefttzZq36u596L6kTnQShkyB0EoROgtBJEDoJQidheo4+ctv9493f97a5+Krn7J7Hz87FV92Pd6KTIHQShE6C0EkQOglCJ0HoJCybo79i99x6933rU+9z3b0/Z/f3daKTIHQShE6C0EkQOglCJ0HoJOTm6Kf2l6+6F757f/lte9/tdYEJQidB6CQInQShkyB0EoROwrI5+ql9LLNO3cOetWrPzOzX37av3V4XmCB0EoROgtBJEDoJQidB6CR8fT6f//yHU/ePZ9323s1Vc+iR3ffOZ616vr0usIDQSRA6CUInQegkCJ0EoZMwnKPDb+JEJ0HoJAidBKGTIHQShE6C0En4F9IPOkPyESHAAAAAAElFTkSuQmCC" alt="扫码在手机上打开"><span>手机扫码打开</span></div><div class="ver"><b>v0.5</b><span>2026-09-14</span><span>美团 vibe coding 作品</span></div></div>
+</header>
 <div class="stage">
   <div class="device">
     <div class="screen">
@@ -263,7 +286,10 @@ input,select,textarea{font-family:inherit;font-size:16px}
     </div>
   </div>
   <aside class="console" id="console"></aside>
-  <aside class="guide" id="guide"></aside>
+  <div class="side">
+    <aside class="panel" id="roles"></aside>
+    <aside class="panel" id="route"></aside>
+  </div>
   <button class="console-fab" id="consoleFab" title="演示控制台">⚙</button>
 </div>
 <section class="diagram">
@@ -273,7 +299,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
 <script>
 /* ============ 合拍 · data & engine ============ */
 'use strict';
-const VERSION = 'v0.1';
+const VERSION = 'v0.5';
 const STORE_KEY = 'hepai_state_v1';
 const CARRY_LIMIT = 20;      // 小额滚存阈值（元）
 const MONTH = '2026-09';
@@ -648,7 +674,7 @@ function renderHome(){
   <div class="card"><h2>最近</h2><div>${S.log.slice(0,5).map(l=>`<div class="hist"><b>${dateCN(l.date)}</b> ${l.text}</div>`).join('')}</div></div>
   <div class="changelog"><b>合拍 ${VERSION}</b> · 2026-09-14 首版：账本 / 值日 / 物资 / 公约 / 入住 / 退租 · <span class="link" onclick="openSheet(sheetChangelog)">更新记录</span></div>`;
 }
-function sheetChangelog(){ return `<h2>更新记录</h2><div class="sub">本链接固定不变，每次迭代在此追加</div><div class="card"><div class="hist"><b>v0.1 · 9月14日</b> 首版上线。分账六问、明细可解释、小额滚存、值日换班与额外清洁记功、阈值测量、请阿姨、物资入账、公约与回顾、新人入住、退租结算。</div><div class="hist"><b>9月12日</b> 占位页上线，链接确定。</div></div>`; }
+function sheetChangelog(){ return `<h2>更新记录</h2><div class="sub">本链接固定不变，每次迭代在此追加</div><div class="card"><div class="hist"><b>v0.5 · 9月14日</b> 页面：顶部栏与二维码、人物与演示路线分栏、整页自适应一屏。</div><div class="hist"><b>v0.1 · 9月14日</b> 首版上线。分账六问、明细可解释、小额滚存、值日换班与额外清洁记功、阈值测量、请阿姨、物资入账、公约与回顾、新人入住、退租结算。</div><div class="hist"><b>9月12日</b> 占位页上线，链接确定。</div></div>`; }
 
 /* ---------- home actions ---------- */
 function toggleAway(){
@@ -1021,10 +1047,18 @@ const ROUTE = [
   { t:'规则回顾作答', d:'首页"等我确认" → 各自重答 → 公约 v3', w:'没有人提议，只是各自重选', fn:()=>{ switchMe('zhao'); go('home'); } },
 ];
 function renderGuide(){
-  const el = $('#guide'); if(!el) return;
-  el.innerHTML = `<div class="grp"><h3>这四个人</h3>${ROLES.map(r=>`<div class="role">${avatarHTML(r.id)}<div><span class="nm">${nameOf(r.id)}</span><span class="tag">${r.tag}</span><div class="ds">${r.desc}</div></div></div>`).join('')}</div>
-  <div class="grp"><b class="lbl">推荐演示路线 · 点一步跳一步</b><div class="route">${ROUTE.map((r,i)=>`<button class="step" data-n="${i+1}" onclick="ROUTE[${i}].fn()"><div class="st">${r.t}</div><div class="sd">${r.d}</div><div class="sw">看点：<i>${r.w}</i></div></button>`).join('')}</div></div>`;
+  const r = $('#roles'), t = $('#route'); if(!r||!t) return;
+  r.innerHTML = `<h3>这几个人</h3>${ROLES.map(x=>`<div class="role">${avatarHTML(x.id)}<div><span class="nm">${nameOf(x.id)}</span><span class="tag">${x.tag}</span><div class="ds">${x.desc}</div></div></div>`).join('')}`;
+  t.innerHTML = `<h3 class="lbl">推荐演示路线 · 点一步跳一步</h3><div class="route">${ROUTE.map((x,i)=>`<button class="step" data-n="${i+1}" onclick="ROUTE[${i}].fn()"><div class="st">${x.t}</div><div class="sd">${x.d}</div><div class="sw">看点：<i>${x.w}</i></div></button>`).join('')}</div>`;
 }
+function fitStage(){
+  const st = document.querySelector('.stage'); if(!st) return;
+  if(window.innerWidth < 900){ st.style.setProperty('--fit', 1); return; }
+  const top = document.querySelector('.topbar'); const avail = window.innerHeight - (top? top.offsetHeight : 0) - 40;
+  const s = Math.max(0.6, Math.min(1, avail/874));
+  st.style.setProperty('--fit', s.toFixed(3));
+}
+window.addEventListener('resize', fitStage);
 function renderConsole(){
   const el = $('#console'); if(!el) return;
   const who = [...activeMembers().map(m=>m.id), ...(S.invitee.status!=='none'&&S.invitee.status!=='joined'?['xiaoya']:[])];
@@ -1071,6 +1105,7 @@ function monthEnd(){ switchMe('ajie'); const n = guestNights('ajie'); push('月�
 /* ================= INIT ================= */
 load();
 renderGuide();
+fitStage();
 document.getElementById('consoleFab').onclick = ()=> document.getElementById('console').classList.toggle('open');
 document.addEventListener('click', e=>{ const c = document.getElementById('console'); if(c.classList.contains('open') && !c.contains(e.target) && e.target.id!=='consoleFab') c.classList.remove('open'); });
 render();
